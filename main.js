@@ -123,7 +123,7 @@ const conferirDados = () => {
 
   status = "recebendo"
   var dados = new Object()
-  dados.versao = storage.get('versao')
+  dados.versao = app.getVersion()
   dados.id = storage.get('id')
   dados.local = storage.get('local')
 
@@ -227,7 +227,7 @@ const processarDados = (dados) => {
     atualizar(dados)
   } else if(dados.valid) {
     cliente = dados.cliente
-    if(tela) {webContents.send('principal', cliente, app.getVersion())}
+    if(tela) {webContents.send('principal', cliente, app.getVersion()}
     buscarIps()
   } else {
     if(tela) {webContents.send('erro', "A ID do usário está ERRADA, verifique todos os números")}
@@ -261,12 +261,11 @@ const download = (url, versao) => {
     if (error) {
       if(tela) {webContents.send('erro', "Não foi possível baixar as atualizações, reinicando em 3 segundos")}
       setTimeout(() => {
-        //app.relaunch()
-        //app.exit(0)
+        app.relaunch()
+        app.exit(0)
       }, 3000)
       return
     } else {
-      storage.set('versao', versao)
       if(process.platform === "win32") {
         shell.openItem('C:/Program Files/Mundo Eletronico/updater.bat')
       } else {
