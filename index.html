@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="./fonts/css/all.min.css" rel="stylesheet">
+
+    <meta name="theme-color" content="#153040" />
+    <title>Mundo Eletrônico</title>
+  </head>
+  <body>
+
+    <template id='tload'>
+      <load>
+        <div class="loading">
+          <div id='loadstatus'></div>
+          <div class="loader center"><span></span></div>
+        </div>
+      </load>
+    </template>
+
+    <template id='tdados'>
+      <dados>
+        <div class='proxysettings'>
+          <div class='proxydados'>
+            <div class='group'>
+              <input id='id' class='inpt' type='text' maxlength='13' required>
+              <span class='bar'></span>
+              <label class='lbl'>ID do cliente</label>
+            </div>
+            <div class='group'>
+              <input id='local' class='inpt' type='text' required>
+              <span class='bar'></span>
+              <label class='lbl'>Local de instalação</label>
+            </div>
+          </div>
+          <span class='spacer'></span>
+          <div class='proxydados'>
+            <div class='radios'>
+              <label class="radio">
+                <input id='proxyfalse' type="radio" name="proxy" value="false" checked>
+                <span>NÃO utilizar proxy</span>
+              </label>
+              <label class="radio">
+                <input id='proxytrue' type="radio" name="proxy" value="true">
+                <span>Utilizar proxy</span>
+              </label>
+            </div>
+            <div class='proxydadoslinha'>
+              <div class='group'>
+                <input id='host' class='inpt' type='text' required>
+                <span class='bar'></span>
+                <label class='lbl'>Endereço</label>
+              </div>
+              <div class='group' style="max-width:65px">
+                <input id='port' class='inpt' type='text' required maxlength="4" value="8080">
+                <span class='bar'></span>
+                <label class='lbl'>Porta</label>
+              </div>
+            </div>
+            <div class='proxydadoslinha'>
+              <div class='group'>
+                <input id='user' class='inpt' type='text' required>
+                <span class='bar'></span>
+                <label class='lbl'>Usuário do proxy</label>
+              </div>
+              <div class='group'>
+                <input id='pass' class='inpt' type='text' required>
+                <span class='bar'></span>
+                <label class='lbl'>Senha do proxy</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='proxysettings'>
+          <div class='proxydados'>
+            <div class='radios'>
+              <label class="radio">
+                <input id='dhcptrue' type="radio" name="dhcp" value="false" checked>
+                <span>IP automático</span>
+              </label>
+              <label class="radio">
+                <input id='dhcpfalse' type="radio" name="dhcp" value="true">
+                <span>IP manual</span>
+              </label>
+            </div>
+            <div class='group'>
+              <input id='dhcpip' class='inpt' type='text' required style="margin-top: 2px">
+              <span class='bar'></span>
+              <label class='lbl'>IP</label>
+            </div>
+          </div>
+          <div class='iphelper'>?</div>
+          <div class='ipexplicacao'>
+            Você pode adicionar vários endereços de IP separando eles com um ponto e vírgula ( ; )
+          </div>
+        </div>
+        <button id='salvar'>Conferir</button>
+      </dados>
+    </template>
+
+    <template id='tprincipal'>
+      <principal>
+        <div id='topo'>
+          <img id='logo' src='resources/icon.png'></img>
+          <div id='cliente'>
+            <div id='nome' class='titulo'></div>
+            <div id='rnc' class='subtitulo'></div>
+            <div id='ce' class='subtitulo'></div>
+            <div id='chave' class='chave'></div>
+          </div>
+          <i id='settings' class='fas fa-cog'></i>
+          <button id='atualizar'>Atualizar</button>
+        </div>
+        <div id='dados'>
+          <div class='dados'>
+            <div class='dadostitulo'>Mês Referência</div>
+            <select id='dadosmes' class='dadostexto'></select>
+          </div>
+          <span class='spacer'></span>
+          <div class='dados'>
+            <div class='dadostitulo'>Franquia Total</div>
+            <div id='dadosfranquia' class='dadostexto'></div>
+          </div>
+          <span class='spacer'></span>
+          <div class='dados'>
+            <div class='dadostitulo'>Total Impresso</div>
+            <div id='dadosimpresso' class='dadostexto'></div>
+          </div>
+          <span class='spacer'></span>
+          <div class='dados'>
+            <div class='dadostitulo'>Páginas Excedentes</div>
+            <div id='dadosexcedente' class='dadostexto'></div>
+          </div>
+        </div>
+        <div id='impressoras'>
+        </div>
+        <div id='rodape' class='subtitulo'>WhatsApp - (47) 99964-9667 &nbsp &nbsp| &nbsp &nbsp suporte@grupomundoeletronico.com.br &nbsp &nbsp| &nbsp &nbsp Versão: </div>
+      </principal>
+    </template>
+
+    <template id='timpressora'>
+      <impressora>
+        <div class='impressoramodelo' id='impressoramodelo'></div>
+        <div class='impressoradados'>
+          <div class='impressoralinha'>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Setor</div>
+              <div id='impressorasetor' class='impressoratexto'></div>
+            </div>
+          </div>
+          <div class='impressoralinha'>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Serial</div>
+              <div id='impressoraserial' class='impressoratexto'></div>
+            </div>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>IP</div>
+              <div id='impressoraip' class='impressoratexto'></div>
+            </div>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'><img src='resources/cmyk.png'></img></div>
+              <div id='impressoratinta' class='impressoratexto'></div>
+              <div class='tintahelper'>?</div>
+              <div class='tintaexplicacao'>
+                Esse nível de tinta é APROXIMADO e baseado no total impresso.<br>
+                A verificação manual no reservatório de tintas é INDISPENSÁVEL.<br>
+                O controle do nível de tinta é responsabilidade do cliente.
+              </div>
+            </div>
+          </div>
+          <div class='impressoralinha'>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Franquia</div>
+              <div id='impressorafranquia' class='impressoratexto'></div>
+            </div>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Impresso</div>
+              <div id='impressoraimpresso' class='impressoratexto'></div>
+            </div>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Excedentes</div>
+              <div id='impressoraexcedentes' class='impressoratexto'></div>
+            </div>
+          </div>
+          <div class='impressoralinha'>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Leitura Inicial</div>
+              <div id='impressorainicial' class='impressoratexto'></div>
+            </div>
+            <div class='impressoradado'>
+              <div class='impressoratitulo'>Leitura Final</div>
+              <div id='impressorafinal' class='impressoratexto'></div>
+            </div>
+          </div>
+        </div>
+      </impressora>
+    </template>
+    <div id='body'>
+    </div>
+    <div id='error'>Uma mensagem de erro bem grande para ser divida em duas linhas</div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

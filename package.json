@@ -1,0 +1,41 @@
+{
+  "name": "Printers",
+  "productName": "Printers",
+  "version": "0.1.0",
+  "description": "Sistema de coleta de dados de impressoras",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --ia32 --dir",
+    "publish": "electron-builder --ia32 -p always"
+  },
+  "repository": "https://github.com/nonam4/ioi_printers",
+  "author": "Luiz Carlos - nonam4@yahoo.com",
+  "license": "GNU-3.0",
+  "devDependencies": {
+    "electron": "^8.2.3",
+    "electron-builder": "^22.5.1",
+    "electron-reload": "^1.5.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "electron-download-manager": "^2.1.2",
+    "electron-updater": "^4.2.5",
+    "https-proxy-agent": "^5.0.0",
+    "my-local-ip": "^1.0.0",
+    "net-snmp": "^2.5.12"
+  },
+  "build": {
+    "appId": "ioiprinters",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "resources/icon.ico"
+    }
+  }
+}
