@@ -227,7 +227,7 @@ const processarDados = (dados) => {
     atualizar(dados)
   } else if(dados.valid) {
     cliente = dados.cliente
-    if(tela) {webContents.send('principal', cliente, app.getVersion()}
+    if(tela) {webContents.send('principal', cliente, app.getVersion())}
     buscarIps()
   } else {
     if(tela) {webContents.send('erro', "A ID do usário está ERRADA, verifique todos os números")}
