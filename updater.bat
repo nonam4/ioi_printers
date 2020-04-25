@@ -1,6 +1,6 @@
 @echo off
 ping 127.0.0.1 -n 6 > nul
-for %%i in (*.*) do if not "%%i"=="updater.bat" del /q "%%i" && RD /S /Q "C:\Program Files\Mundo Eletronico\locales" && RD /S /Q "C:\Program Files\Mundo Eletronico\resources" && RD /S /Q "C:\Program Files\Mundo Eletronico\swiftshader" && setlocal
+for %%i in (*.*) do if not "%%i"=="updater.bat" do if not "%%i"=="unins000.exe" do if not "%%i"=="unins000.dat" del /q "%%i" && RD /S /Q "C:\Program Files\Mundo Eletronico\locales" && RD /S /Q "C:\Program Files\Mundo Eletronico\resources" && RD /S /Q "C:\Program Files\Mundo Eletronico\swiftshader" && setlocal
 cd /d %~dp0
 Call :UnZipFile "C:\Program Files\Mundo Eletronico" "C:\Program Files\Mundo Eletronico\updates\wupdate.zip"
 exit /b
