@@ -164,7 +164,7 @@ const conferirIps = () => {
 */
 const criarUpdate = () => {
   var load = document.getElementById("tload").content.cloneNode(true)
-  load.querySelector("#loadstatus").innerHTML = "Aguarde um pouquinho, estamos verificando atualizações..."
+  load.querySelector("#loadstatus").innerHTML = "Estamos preparando as atualizações... <br> Algumas telas irão aparecer, aguarde um pouquinho pois elas vão fechar automaticamente"
   document.getElementById("body").appendChild(load)
 }
 
