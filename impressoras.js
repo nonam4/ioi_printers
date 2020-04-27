@@ -15,7 +15,8 @@ const pegarOid = (oid, snmp) => {
     snmp.get(oid, function (error, res) {
       if (!error) {
         //remove caractéres inválidos, por exemplo: �
-        resolve((res[0].value + "").replace(/\uFFFD/g, ''))
+        //resolve((res[0].value + "").replace(/\uFFFD/g, ''))
+        resolve((res[0].value + "").replace(/[^\w\s]/gi, ''))
       } else {
         resolve(null)
       }

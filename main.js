@@ -291,7 +291,7 @@ const buscarIps = () => {
       checarFabricante(ip + y)
     }
   }
-  var data = new Date()
+
   setTimeout(() => {
     conferirDados()
   }, 3600000)
@@ -303,6 +303,7 @@ const checarFabricante = (ip) => {
   snmp.get(oid, (error, res) => {
     if (!error) {
       var marca = res[0].value + ""
+      console.log("resposta do IP ", ip, " => ", marca)
       if(!marca.toLowerCase().includes("switch")){
         selecionarModelo(marca, snmp, ip)
       } else {
@@ -340,18 +341,20 @@ const selecionarModelo = (fabricante, snmp, ip) => {
 
     if(impressora != null) {
       impressora.pegarDados().then(res => {
-        if(impressora.modelo != null &&
-           impressora.serial != null &&
-           impressora.leitura != null) {
+        console.log("impressora definida => ", impressora.modelo, ", ", impressora.serial, ", ", impressora.leitura, ", ", impressora.ip)
+        if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null) {
+          console.log("gravando impressora")
           gravarImpressora(impressora, snmp)
         } else {
           snmp.close()
         }
       })
     } else {
+      console.log("impressora no ip ", ip, " nula")
       snmp.close()
     }
   } else {
+    console.log("marca no ip ", ip, " nula")
     snmp.close()
   }
 }
@@ -378,12 +381,16 @@ const gravarImpressora = (impressora, snmp) => {
     axios.request(config).then((res) => {
       snmp.close()
     }).catch(err => {
+      console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
+      if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
       snmp.close()
     })
   } else {
     axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip).then((res) => {
       snmp.close()
     }).catch(err => {
+      console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
+      if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
       snmp.close()
     })
   }

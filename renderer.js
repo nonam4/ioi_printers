@@ -231,7 +231,7 @@ const preencherPrincipal = (dados, version) => {
     var impressora = impressoras[Object.keys(impressoras)[x]]
     if(impressora.ativa) {
       /*
-      * define a franquia total do cliente
+      * define a franquia total do cliente se a franquia for separada por maquinas
       */
       if(dados.franquia.tipo !== "ilimitado" && dados.franquia.tipo !== "pagina") {
 
@@ -297,16 +297,21 @@ const preencherPrincipal = (dados, version) => {
     } else {
       dados.excedentes = 0
     }
+    document.body.querySelector("#dadosfranquia").innerHTML = dados.franquia.valor + " págs"
+    document.body.querySelector("#dadosimpresso").innerHTML = dados.impresso + " págs"
+    document.body.querySelector("#dadosexcedente").innerHTML = dados.excedentes + " págs"
   } else {
     dados.excedentes = "S/F"
     dados.franquia.valor = "S/F"
-    dados.impresso = ret.cliente.impresso + " págs"
+    dados.impresso = dados.impresso
+
+    document.body.querySelector("#dadosfranquia").innerHTML = dados.franquia.valor
+    document.body.querySelector("#dadosimpresso").innerHTML = dados.impresso + " págs"
+    document.body.querySelector("#dadosexcedente").innerHTML = dados.excedentes
   }
 
   //document.body.querySelector("#dadosmes").innerHTML = meses[parseInt(mes)] + "/" + ano
-  document.body.querySelector("#dadosfranquia").innerHTML = dados.franquia.valor + " págs"
-  document.body.querySelector("#dadosimpresso").innerHTML = dados.impresso + " págs"
-  document.body.querySelector("#dadosexcedente").innerHTML = dados.excedentes + " págs"
+
 }
 
 const gerarDatasDeListagem = () => {
