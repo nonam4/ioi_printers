@@ -198,7 +198,7 @@ const receberDados = (dados) => {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados?plataforma=coletor&id=' + dados.id + '&versao=' + dados.versao + '&local=' + dados.local + '&sistema=' + process.platform,
       httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
     }
-    axios.request(config).then((res) => {
+    axios.request(config).then(res => {
         processarDados(res.data)
     }).catch(err => {
       if(tela) {
@@ -209,7 +209,7 @@ const receberDados = (dados) => {
       }
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/dados?plataforma=coletor&id=' + dados.id + '&versao=' + dados.versao + '&local=' + dados.local + '&sistema=' + process.platform).then((res) => {
+    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/dados?plataforma=coletor&id=' + dados.id + '&versao=' + dados.versao + '&local=' + dados.local + '&sistema=' + process.platform).then(res => {
         processarDados(res.data)
     }).catch(err => {
       if(tela) {
@@ -378,7 +378,7 @@ const gravarImpressora = (impressora, snmp) => {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip,
       httpsAgent: new proxy('http://'+ storage.get('user') + ':' + storage.get('pass') + '@' + storage.get('host') + ':' + storage.get('port'))
     }
-    axios.request(config).then((res) => {
+    axios.request(config).then(res => {
       snmp.close()
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
@@ -386,7 +386,7 @@ const gravarImpressora = (impressora, snmp) => {
       snmp.close()
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip).then((res) => {
+    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip).then(res => {
       snmp.close()
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
