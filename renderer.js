@@ -279,7 +279,7 @@ const preencherPrincipal = (dados, version) => {
 
       if(dados.franquia.tipo == "ilimitado" || dados.franquia.tipo == "pagina") {
         layout.querySelector("#impressoraexcedentes").innerHTML = "S/F"
-      } else if(dados.franquia.tipo == "maquina") {
+      } else if(dados.franquia.tipo == "maquina" && impressora.leituras[listagem] !== undefined) {
         var impresso = impressora.leituras[listagem].final.valor - impressora.leituras[listagem].inicial.valor
         if(impresso > impressora.franquia) {
             layout.querySelector("#impressoraexcedentes").innerHTML = impresso - impressora.franquia + " págs"
