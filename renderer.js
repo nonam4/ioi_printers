@@ -79,7 +79,7 @@ const editarDados = (arg) => {
   document.getElementById("host").value = arg.ip + "254"
 
   document.getElementById("id").value = arg.id
-  document.getElementById("local").value = arg.local
+  document.getElementById("local").value = atob(arg.local)
 
   if(arg.proxy) {
     document.getElementById('proxytrue').checked = true
@@ -107,7 +107,7 @@ const funcoesDados = () => {
 
     var dados = new Object()
     dados.id = document.getElementById('id').value
-    dados.local = document.getElementById('local').value
+    dados.local = btoa(document.getElementById('local').value)
 
     dados.proxy = false
     if(document.getElementById('proxytrue').checked){
@@ -286,6 +286,8 @@ const preencherPrincipal = (dados, version) => {
         } else {
             layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
         }
+      } else {
+        layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
       }
       document.getElementById("impressoras").appendChild(layout)
     }
