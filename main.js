@@ -195,10 +195,18 @@ const gravarDados = (dados) => {
 const receberDados = (dados) => {
   if(dados.proxy) {
     var config = {
-      url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados?plataforma=coletor&id=' + dados.id + '&versao=' + dados.versao + '&local=' + dados.local + '&sistema=' + process.platform,
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
       httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
     }
-    axios.request(config).then(res => {
+    axios.request(config, {
+      params: {
+        plataforma: 'coletor',
+        id: dados.id,
+        versao: dados.versao,
+        local: dados.local,
+        sistema: process.platform
+      }
+    }).then(res => {
         processarDados(res.data)
     }).catch(err => {
       if(tela) {
@@ -209,7 +217,15 @@ const receberDados = (dados) => {
       }
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/dados?plataforma=coletor&id=' + dados.id + '&versao=' + dados.versao + '&local=' + dados.local + '&sistema=' + process.platform).then(res => {
+    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/dados', {
+      params: {
+        plataforma: 'coletor',
+        id: dados.id,
+        versao: dados.versao,
+        local: dados.local,
+        sistema: process.platform
+      }
+    }).then(res => {
         processarDados(res.data)
     }).catch(err => {
       if(tela) {
@@ -341,20 +357,16 @@ const selecionarModelo = (fabricante, snmp, ip) => {
 
     if(impressora != null) {
       impressora.pegarDados().then(res => {
-        console.log("impressora definida => ", impressora.modelo, ", ", impressora.serial, ", ", impressora.leitura, ", ", impressora.ip)
         if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null) {
-          console.log("gravando impressora")
           gravarImpressora(impressora, snmp)
         } else {
           snmp.close()
         }
       })
     } else {
-      console.log("impressora no ip ", ip, " nula")
       snmp.close()
     }
   } else {
-    console.log("marca no ip ", ip, " nula")
     snmp.close()
   }
 }
@@ -375,10 +387,19 @@ const marcaExiste = (fabricante) => {
 const gravarImpressora = (impressora, snmp) => {
   if(storage.get('proxy')) {
     var config = {
-      url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip,
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora',
       httpsAgent: new proxy('http://'+ storage.get('user') + ':' + storage.get('pass') + '@' + storage.get('host') + ':' + storage.get('port'))
     }
-    axios.request(config).then(res => {
+    axios.request(config, {
+      params: {
+        id: storage.get('id'),
+        empresa: cliente.empresa,
+        serial: impressora.serial,
+        modelo: impressora.modelo,
+        leitura: impressora.leitura,
+        ip: impressora.ip
+      }
+    }).then(res => {
       snmp.close()
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
@@ -386,11 +407,20 @@ const gravarImpressora = (impressora, snmp) => {
       snmp.close()
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora?id=' + storage.get('id') + '&empresa=' + cliente.empresa + '&serial=' + impressora.serial + '&modelo=' + impressora.modelo + '&leitura=' + impressora.leitura + '&ip=' + impressora.ip).then(res => {
+    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora', {
+      params: {
+        id: storage.get('id'),
+        empresa: cliente.empresa,
+        serial: impressora.serial,
+        modelo: impressora.modelo,
+        leitura: impressora.leitura,
+        ip: impressora.ip
+      }
+    }).then(res => {
       snmp.close()
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
-      if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
+      if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura + " págs")}
       snmp.close()
     })
   }
