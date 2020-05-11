@@ -45,7 +45,7 @@ const createWindow = () => {
   mainWindow.loadURL(`file://${__dirname}/index.html`)
   mainWindow.removeMenu()
   // abre o console
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
   mainWindow.on('close', function (event) {
       if(!app.isQuiting){
           event.preventDefault()
@@ -83,7 +83,6 @@ const createWindow = () => {
 
 // quando o app estiver pronto
 app.on('ready', () => {
-  //storage.set('versao', "0.0.0")
   criarTray()
   conferirDados()
 })
@@ -239,7 +238,12 @@ const receberDados = (dados) => {
 }
 
 const processarDados = (dados) => {
+
   if(dados.atualizar) {
+    if(tela) { webContents.send('update') } else {
+      tray.destroy()
+      createWindow()
+    }
     atualizar(dados)
   } else if(dados.valid) {
     cliente = dados.cliente
@@ -248,16 +252,13 @@ const processarDados = (dados) => {
   } else {
     if(tela) {webContents.send('erro', "A ID do usário está ERRADA, verifique todos os números")}
   }
-  if(tela) {webContents.send('removerLoad')}
+  if(tela && !dados.atualizar) {webContents.send('removerLoad')}
 }
 
 const atualizar = (dados) => {
   status = "atualizando"
-  tray.destroy()
-  if(!tela) {createWindow()} else {
-    webContents.send('update')
-  }
 
+  /*
   if(storage.get('proxy')) {
     var config = {
       url: dados.url,
@@ -267,10 +268,10 @@ const atualizar = (dados) => {
   } else {
     download(dados.url, dados.versao)
   }
+  */
 }
 
 const download = (url, versao) => {
-  console.log(url)
   DownloadManager.download({
     url: url
   }, function (error, info) {
