@@ -224,72 +224,78 @@ const preencherPrincipal = (dados, version) => {
   var datas = document.getElementById("dadosmes")
   var listagem = datas.options[datas.selectedIndex].value
 
+  if(dados.franquia.valor == undefined || dados.franquia.valor == null) {
+    dados.franquia.valor = 0
+  }
+
   dados.impresso = 0
   var impressoras = dados.impressoras
 
-  for(var x = 0; x < Object.keys(impressoras).length; x++) {
-    var impressora = impressoras[Object.keys(impressoras)[x]]
-    if(impressora.ativa) {
-      /*
-      * define a franquia total do cliente se a franquia for separada por maquinas
-      */
-      if(dados.franquia.tipo !== "ilimitado" && dados.franquia.tipo !== "pagina") {
+  if(impressoras != undefined && impressoras != null) {
+    for(var x = 0; x < Object.keys(impressoras).length; x++) {
+      var impressora = impressoras[Object.keys(impressoras)[x]]
+      if(impressora.ativa) {
+        /*
+        * define a franquia total do cliente se a franquia for separada por maquinas
+        */
+        if(dados.franquia.tipo !== "ilimitado" && dados.franquia.tipo !== "pagina") {
 
-        dados.franquia.valor = parseInt(dados.franquia.valor) + parseInt(impressora.franquia)
-      }
-      /*
-      * define o total impresso por todas as maquinas
-      */
-      if(impressora.leituras[listagem] !== undefined) {
-        var inicio = impressora.leituras[listagem].inicial.valor
-        var fim = impressora.leituras[listagem].final.valor
-        dados.impresso = dados.impresso + (fim - inicio)
-      }
-
-      /*
-      * cria a interface
-      */
-
-      var layout = document.getElementById("timpressora").content.cloneNode(true)
-      layout.querySelector("impressora").id = Object.keys(impressoras)[x]
-      layout.querySelector("#impressoramodelo").innerHTML = impressora.modelo
-      layout.querySelector("#impressorasetor").innerHTML = impressora.setor
-      layout.querySelector("#impressoraserial").innerHTML = Object.keys(impressoras)[x]
-      layout.querySelector("#impressoraip").innerHTML = impressora.ip
-      if(impressora.tinta.capacidade != "ilimitado") {
-        layout.querySelector("#impressoratinta").innerHTML = impressora.tinta.nivel + "%"
-      } else {
-        layout.querySelector("#impressoratinta").innerHTML = "∞"
-      }
-
-      if(dados.franquia.tipo != "ilimitado" && dados.franquia.tipo != "pagina") {
-          layout.querySelector("#impressorafranquia").innerHTML = impressora.franquia + " págs"
-      } else {
-        layout.querySelector("#impressorafranquia").innerHTML = "S/F"
-      }
-      if(impressora.leituras[listagem] !== undefined) {
-        layout.querySelector("#impressoraimpresso").innerHTML = impressora.leituras[listagem].final.valor - impressora.leituras[listagem].inicial.valor + " págs"
-        layout.querySelector("#impressorainicial").innerHTML = impressora.leituras[listagem].inicial.dia + "/" + mes + "/" + ano + " - " + impressora.leituras[listagem].inicial.valor + " págs"
-        layout.querySelector("#impressorafinal").innerHTML = impressora.leituras[listagem].final.dia + "/" + mes + "/" + ano + " - " + impressora.leituras[listagem].final.valor + " págs"
-      } else {
-        layout.querySelector("#impressoraimpresso").innerHTML = "0 págs"
-        layout.querySelector("#impressorainicial").innerHTML = "Sem registro"
-        layout.querySelector("#impressorafinal").innerHTML = "Sem registro"
-      }
-
-      if(dados.franquia.tipo == "ilimitado" || dados.franquia.tipo == "pagina") {
-        layout.querySelector("#impressoraexcedentes").innerHTML = "S/F"
-      } else if(dados.franquia.tipo == "maquina" && impressora.leituras[listagem] !== undefined) {
-        var impresso = impressora.leituras[listagem].final.valor - impressora.leituras[listagem].inicial.valor
-        if(impresso > impressora.franquia) {
-            layout.querySelector("#impressoraexcedentes").innerHTML = impresso - impressora.franquia + " págs"
-        } else {
-            layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
+          dados.franquia.valor = parseInt(dados.franquia.valor) + parseInt(impressora.franquia)
         }
-      } else {
-        layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
+        /*
+        * define o total impresso por todas as maquinas
+        */
+        if(impressora.leituras[listagem] !== undefined) {
+          var inicio = impressora.leituras[listagem].inicial.valor
+          var fim = impressora.leituras[listagem].final.valor
+          dados.impresso = dados.impresso + (fim - inicio)
+        }
+
+        /*
+        * cria a interface
+        */
+
+        var layout = document.getElementById("timpressora").content.cloneNode(true)
+        layout.querySelector("impressora").id = Object.keys(impressoras)[x]
+        layout.querySelector("#impressoramodelo").innerHTML = impressora.modelo
+        layout.querySelector("#impressorasetor").innerHTML = impressora.setor
+        layout.querySelector("#impressoraserial").innerHTML = Object.keys(impressoras)[x]
+        layout.querySelector("#impressoraip").innerHTML = impressora.ip
+        if(impressora.tinta.capacidade != "ilimitado") {
+          layout.querySelector("#impressoratinta").innerHTML = impressora.tinta.nivel + "%"
+        } else {
+          layout.querySelector("#impressoratinta").innerHTML = "∞"
+        }
+
+        if(dados.franquia.tipo != "ilimitado" && dados.franquia.tipo != "pagina") {
+            layout.querySelector("#impressorafranquia").innerHTML = impressora.franquia + " págs"
+        } else {
+          layout.querySelector("#impressorafranquia").innerHTML = "S/F"
+        }
+        if(impressora.leituras[listagem] !== undefined) {
+          layout.querySelector("#impressoraimpresso").innerHTML = impressora.leituras[listagem].final.valor - impressora.leituras[listagem].inicial.valor + " págs"
+          layout.querySelector("#impressorainicial").innerHTML = impressora.leituras[listagem].inicial.dia + "/" + mes + "/" + ano + " - " + impressora.leituras[listagem].inicial.valor + " págs"
+          layout.querySelector("#impressorafinal").innerHTML = impressora.leituras[listagem].final.dia + "/" + mes + "/" + ano + " - " + impressora.leituras[listagem].final.valor + " págs"
+        } else {
+          layout.querySelector("#impressoraimpresso").innerHTML = "0 págs"
+          layout.querySelector("#impressorainicial").innerHTML = "Sem registro"
+          layout.querySelector("#impressorafinal").innerHTML = "Sem registro"
+        }
+
+        if(dados.franquia.tipo == "ilimitado" || dados.franquia.tipo == "pagina") {
+          layout.querySelector("#impressoraexcedentes").innerHTML = "S/F"
+        } else if(dados.franquia.tipo == "maquina" && impressora.leituras[listagem] !== undefined) {
+          var impresso = impressora.leituras[listagem].final.valor - impressora.leituras[listagem].inicial.valor
+          if(impresso > impressora.franquia) {
+              layout.querySelector("#impressoraexcedentes").innerHTML = impresso - impressora.franquia + " págs"
+          } else {
+              layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
+          }
+        } else {
+          layout.querySelector("#impressoraexcedentes").innerHTML = "0 págs"
+        }
+        document.getElementById("impressoras").appendChild(layout)
       }
-      document.getElementById("impressoras").appendChild(layout)
     }
   }
 
