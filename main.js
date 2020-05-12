@@ -240,10 +240,6 @@ const receberDados = (dados) => {
 const processarDados = (dados) => {
 
   if(dados.atualizar) {
-    if(tela) { webContents.send('update') } else {
-      tray.destroy()
-      createWindow()
-    }
     atualizar(dados)
   } else if(dados.valid) {
     cliente = dados.cliente
@@ -258,7 +254,10 @@ const processarDados = (dados) => {
 const atualizar = (dados) => {
   status = "atualizando"
 
-  /*
+  if(tela) { webContents.send('update') } else {
+    tray.destroy()
+    createWindow()
+  }
   if(storage.get('proxy')) {
     var config = {
       url: dados.url,
@@ -268,7 +267,6 @@ const atualizar = (dados) => {
   } else {
     download(dados.url, dados.versao)
   }
-  */
 }
 
 const download = (url, versao) => {
