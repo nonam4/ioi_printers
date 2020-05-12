@@ -23,8 +23,6 @@ renderer.on('removerLoad', function(event) {
 })
 
 renderer.on('principal', function(event, dados, version) {
-  cliente = dados
-  versao = version
   criarPrincipal(dados, version)
 })
 
@@ -235,6 +233,7 @@ const preencherPrincipal = (dados, version) => {
     for(var x = 0; x < Object.keys(impressoras).length; x++) {
       var impressora = impressoras[Object.keys(impressoras)[x]]
       if(impressora.ativa) {
+        console.log(impressora)
         /*
         * define a franquia total do cliente se a franquia for separada por maquinas
         */

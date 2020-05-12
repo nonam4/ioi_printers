@@ -400,6 +400,7 @@ const gravarImpressora = (impressora, snmp) => {
       }
     }).then(res => {
       snmp.close()
+      criarLayoutImpressora(impressora)
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
       if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
@@ -417,10 +418,77 @@ const gravarImpressora = (impressora, snmp) => {
       }
     }).then(res => {
       snmp.close()
+      criarLayoutImpressora(impressora)
     }).catch(err => {
       console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
       if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura + " págs")}
       snmp.close()
     })
   }
+}
+
+const criarLayoutImpressora = (impressora) => {
+  var data = new Date()
+  var ano = data.getFullYear()
+  var mes = data.getMonth() + 1;
+  (mes < 10) ? mes = "0" + mes : 0;
+  var dia = data.getDate();
+  (dia < 10) ? dia = "0" + dia : 0;
+
+  if(cliente.impressoras != undefined && cliente.impressoras[impressora.serial] !== undefined) {
+    if(cliente.impressoras[impressora.serial].ativa) {
+      //se a impressora existir e for ativa
+      if(cliente.impressoras[impressora.serial].leituras[ano + "-" + mes] !== undefined) {
+        //se já tiver o primeiro registro de leitura do mês
+        cliente.impressoras[impressora.serial].leituras[ano + "-" + mes].final.valor = parseInt(impressora.leitura)
+        cliente.impressoras[impressora.serial].leituras[ano + "-" + mes].final.dia = dia
+      } else {
+        //caso seja um mês novo
+        cliente.impressoras[impressora.serial].leituras = {
+          [ano + "-" + mes]: {
+            inicial : {
+              valor: impressora.leitura,
+              dia: dia
+            }, final : {
+              valor: impressora.leitura,
+              dia: dia
+            }
+          }
+        }
+      }
+      //atualiza os niveis de tinta de acordo com a capacidade dele
+      if(cliente.impressoras[impressora.serial].tinta.capacidade !== "ilimitado") {
+        cliente.impressoras[impressora.serial].tinta = new Object()
+        cliente.impressoras[impressora.serial].tinta.impresso = impressora.leitura - cliente.impressoras[impressora.serial].tinta.cheio
+        cliente.impressoras[impressora.serial].tinta.nivel = parseInt(100 - ((100 * cliente.impressoras[impressora.serial].tinta.impresso) / cliente.impressoras[impressora.serial].tinta.capacidade))
+      }
+    }
+  } else {
+    cliente.impressoras = {
+      [impressora.serial]: {
+        franquia: 0,
+        ip: impressora.ip,
+        modelo: impressora.modelo,
+        setor: "Não informado",
+        ativa: true,
+        tinta: {
+          capacidade: "ilimitado",
+          cheio: impressora.leitura,
+          impresso: 0,
+          nivel: 100
+        }, leituras: {
+          [ano + "-" + mes]: {
+            inicial : {
+              valor: impressora.leitura,
+              dia: dia
+            }, final : {
+              valor: impressora.leitura,
+              dia: dia
+            }
+          }
+        }
+      }
+    }
+  }
+  if(tela) {webContents.send('principal', cliente, app.getVersion())}
 }
