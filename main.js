@@ -318,7 +318,6 @@ const checarFabricante = (ip) => {
   snmp.get(oid, (error, res) => {
     if (!error) {
       var marca = res[0].value + ""
-      console.log("resposta do IP ", ip, " => ", marca)
       if(!marca.toLowerCase().includes("switch")){
         selecionarModelo(marca, snmp, ip)
       } else {
@@ -402,7 +401,6 @@ const gravarImpressora = (impressora, snmp) => {
       snmp.close()
       criarLayoutImpressora(impressora)
     }).catch(err => {
-      console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
       if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
       snmp.close()
     })
@@ -420,7 +418,6 @@ const gravarImpressora = (impressora, snmp) => {
       snmp.close()
       criarLayoutImpressora(impressora)
     }).catch(err => {
-      console.log("erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura, " - stack => ", err)
       if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura + " págs")}
       snmp.close()
     })
