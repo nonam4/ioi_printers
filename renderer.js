@@ -218,7 +218,7 @@ const preencherPrincipal = (dados, version) => {
   document.body.querySelector("#ce").innerHTML = dados.endereco.cidade + ", " + dados.endereco.estado
   document.body.querySelector("#chave").innerHTML = dados.id
 
-  gerarDatasDeListagem()
+  gerarDatasDeListagem(dados)
   var datas = document.getElementById("dadosmes")
   var listagem = datas.options[datas.selectedIndex].value
 
@@ -317,7 +317,7 @@ const preencherPrincipal = (dados, version) => {
   }
 }
 
-const gerarDatasDeListagem = () => {
+const gerarDatasDeListagem = (cliente) => {
 
   var dataAtual = new Date()
   var ano = dataAtual.getFullYear()
@@ -325,7 +325,8 @@ const gerarDatasDeListagem = () => {
   if (mes < 10) { mes = "0" + mes }
 
   var datas = document.getElementById("dadosmes")
-  datas.addEventListener("change", alterarDatas)
+  datas.addEventListener("change", () => {alterarDatas(cliente)})
+  datas
   datas.innerHTML = ""
 	//preenche os meses disponiveis
 	for(var x = 0; x < 3; x++){
@@ -356,7 +357,7 @@ const funcoesPrincipal = () => {
   })
 }
 
-const alterarDatas = () => {
+const alterarDatas = (cliente) => {
   criarLoad()
   preencherImpressoras(cliente, versao)
   setTimeout(function(){
