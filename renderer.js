@@ -203,8 +203,8 @@ const criarPrincipal = (dados, version) => {
 const preencherPrincipal = (dados, version) => {
   var data = new Date()
   var ano = data.getFullYear()
-  var mes = data.getMonth() + 1;
-  (mes < 10) ? mes = "0" + mes : 0;
+  var mes = data.getMonth() + 1
+  if (mes < 10) { mes = "0" + mes }
   var meses = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
   document.body.querySelector("#rodape").innerHTML = document.body.querySelector("#rodape").innerHTML + version
@@ -233,7 +233,6 @@ const preencherPrincipal = (dados, version) => {
     for(var x = 0; x < Object.keys(impressoras).length; x++) {
       var impressora = impressoras[Object.keys(impressoras)[x]]
       if(impressora.ativa) {
-        console.log(impressora)
         /*
         * define a franquia total do cliente se a franquia for separada por maquinas
         */
@@ -316,35 +315,31 @@ const preencherPrincipal = (dados, version) => {
     document.body.querySelector("#dadosimpresso").innerHTML = dados.impresso + " págs"
     document.body.querySelector("#dadosexcedente").innerHTML = dados.excedentes
   }
-
-  //document.body.querySelector("#dadosmes").innerHTML = meses[parseInt(mes)] + "/" + ano
-
 }
 
 const gerarDatasDeListagem = () => {
 
   var dataAtual = new Date()
   var ano = dataAtual.getFullYear()
-  var mes = dataAtual.getMonth() + 1;
-  (mes < 10) ? mes = "0" + mes : 0;
+  var mes = dataAtual.getMonth() + 1
+  if (mes < 10) { mes = "0" + mes }
 
   var datas = document.getElementById("dadosmes")
   datas.addEventListener("change", alterarDatas)
   datas.innerHTML = ""
 	//preenche os meses disponiveis
 	for(var x = 0; x < 3; x++){
-
     var data = document.createElement("option")
     data.value = ano + "-" + mes
     data.innerHTML = mes + "/" + ano
     datas.appendChild(data)
 
 		if(mes <= 1){
-			mes = 12;
-			ano = ano - 1;
+			mes = 12
+			ano = ano - 1
 		} else {
-			mes = mes - 1;
-      (mes < 10) ? mes = "0" + mes : 0;
+			mes = mes - 1
+      if(mes < 10) { mes = "0" + mes }
 		}
 	}
 }
@@ -373,8 +368,8 @@ const preencherImpressoras = (dados, version) => {
   document.getElementById("impressoras").innerHTML = ""
   var data = new Date()
   var ano = data.getFullYear()
-  var mes = data.getMonth() + 1;
-  (mes < 10) ? mes = "0" + mes : 0;
+  var mes = data.getMonth() + 1
+  if(mes < 10) { mes = "0" + mes }
   var meses = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
   var datas = document.getElementById("dadosmes")
@@ -397,7 +392,6 @@ const preencherImpressoras = (dados, version) => {
       /*
       * cria a interface
       */
-
       var layout = document.getElementById("timpressora").content.cloneNode(true)
       layout.querySelector("impressora").id = Object.keys(impressoras)[x]
       layout.querySelector("#impressoramodelo").innerHTML = impressora.modelo

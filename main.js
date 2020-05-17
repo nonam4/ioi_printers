@@ -206,7 +206,9 @@ const receberDados = (dados) => {
         sistema: process.platform
       }
     }).then(res => {
+      if(ret.data.ativo) {
         processarDados(res.data)
+      }
     }).catch(err => {
       if(tela) {
         webContents.send('erro', "Verifique os dados do PROXY e se a ID está correta")
