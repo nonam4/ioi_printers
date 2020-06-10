@@ -106,7 +106,7 @@ ipcMain.on('editarDados', (event) => {
 / minhas funções
 */
 const criarTray = () => {
-  tray = new Tray('resources/icon.ico')
+  tray = new Tray('resources/icon.png')
   tray.setToolTip('Mundo Eletrônico')
 
   var contextMenu = Menu.buildFromTemplate([

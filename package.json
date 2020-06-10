@@ -6,8 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --ia32 --dir",
-    "publish": "electron-builder --ia32 -p always"
+    "build": "electron-builder --ia32 --dir"
   },
   "repository": "https://github.com/nonam4/ioi_printers",
   "author": "Luiz Carlos - nonam4@yahoo.com",
@@ -28,6 +27,7 @@
   "build": {
     "appId": "ioiprinters",
     "linux": {
+      "icon": "resources/icon.png",
       "target": [
         "AppImage",
         "deb"
