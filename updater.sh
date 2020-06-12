@@ -1,1 +1,0 @@
-unzip -o /etc/MundoEletronico/updates/lupdate.zip -d /etc/MundoEletronico/ && cd /etc/MundoEletronico && chmod +x printers && MundoEletronico.sh

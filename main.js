@@ -246,7 +246,7 @@ const receberDados = (dados) => {
 
 const processarDados = (dados) => {
 
-  if(dados.atualizar) {
+  if(dados.atualizar && process.platform === "win32") {
     atualizar(dados)
   } else if(dados.valid) {
     cliente = dados.cliente
@@ -288,11 +288,7 @@ const download = (url, versao) => {
       }, 3000)
       return
     } else {
-      if(process.platform === "win32") {
-        shell.openItem('C:/Program Files/Mundo Eletronico/updater.bat')
-      } else {
-        shell.openExternal('/etc/MundoEletronico/updater.sh')
-      }
+      shell.openItem('C:/Program Files/Mundo Eletronico/updater.bat')
       app.exit(0)
     }
   })

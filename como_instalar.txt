@@ -11,7 +11,7 @@
 6. digite "mv /home/usuario/MundoEletronico/* /etc/MundoEletronico"
 7. digite "chmod 777 /etc/MundoEletronico"
 8. digite "cd /etc/MundoEletronico"
-9. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh && chmod +x printers && chmod +x updater.sh && chmod +x printers"
+9. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh && chmod +x printers && chmod +x printers"
 10. digite "mv /etc/MundoEletronico/MundoEletronico.desktop /home/usuario/.config/autostart"
 11. digite "mv /etc/MundoEletronico/MundoEletronico.sh /bin"
 12. digite "apt install unzip"
