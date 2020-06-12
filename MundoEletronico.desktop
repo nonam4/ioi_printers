@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=MundoEletronico
+Exec=MundoEletronico.sh
+Icon=/etc/MundoEletronico/icon.png
+StartupNotify=false
+Terminal=false
+

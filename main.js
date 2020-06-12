@@ -7,18 +7,23 @@ const proxy = require('https-proxy-agent')
 const SnmpManager = require('net-snmp')
 const Storage = require('./storage.js')
 const Printers = require('./impressoras.js')
-
-//require('electron-reload')(__dirname)
 const storage = new Storage({ configName: 'settings', defaults: { versao: '0.1.0', dhcp: true }})
 const dhcp = () => {
   var ip = require('my-local-ip')().split('.')
   return ip[0] + '.' + ip[1] + '.' + ip[2] + '.'
 }
+var icon
+if(process.platform === "win32") {
+  icon = "resources/icon.png"
+} else {
+  icon = "/etc/MundoEletronico/resources/icon.png"
+}
+
 
 if(process.platform === "win32") {
   DownloadManager.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 } else {
-  DownloadManager.register({downloadFolder:'/lib/MundoEletronico/updates'})
+  DownloadManager.register({downloadFolder:'/etc/MundoEletronico/updates'})
 }
 
 //status: atualizando, recebendo, dados
@@ -34,7 +39,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: 'resources/icon.ico',
+    icon: icon,
     maximizable: false,
     resizable: false,
     webPreferences: {
@@ -106,7 +111,7 @@ ipcMain.on('editarDados', (event) => {
 / minhas funções
 */
 const criarTray = () => {
-  tray = new Tray('resources/icon.png')
+  tray = new Tray(icon)
   tray.setToolTip('Mundo Eletrônico')
 
   var contextMenu = Menu.buildFromTemplate([

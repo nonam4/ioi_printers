@@ -6,10 +6,11 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --ia32 --dir"
+    "windows": "electron-builder --ia32 --dir",
+    "linux": "electron-builder --x64 --dir"
   },
   "repository": "https://github.com/nonam4/ioi_printers",
-  "author": "Luiz Carlos - nonam4@yahoo.com",
+  "author": "Luiz Carlos <nonam4@yahoo.com>",
   "license": "GNU-3.0",
   "devDependencies": {
     "electron": "^8.2.3",
@@ -29,13 +30,12 @@
     "linux": {
       "icon": "resources/icon.png",
       "target": [
-        "AppImage",
         "deb"
       ]
     },
     "win": {
       "target": "NSIS",
-      "icon": "resources/icon.ico"
+      "icon": "icon.ico"
     }
   }
 }

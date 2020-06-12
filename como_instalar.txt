@@ -1,0 +1,16 @@
+#todos os comandos para digitar são sem aspas
+#ao final de cada linha aperte enter
+
+
+1. na pasta do usuario extraia o arquivo (ex: "/home/usuario/MundoEletronico")
+2. abra um terminal
+3. digite "su" e depois digite a senha de root (m5lt1l@nln ou m5lt1l@n)
+4. digite "mkdir /etc/MundoEletronico"
+5. digite "mv /home/usuario/MundoEletronico/* /etc/MundoEletronico"
+6. digite "chmod 777 /etc/MundoEletronico"
+7. digite "cd /etc/MundoEletronico"
+8. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh"
+9. digite "mv /etc/MundoEletronico/MundoEletronico.desktop /home/usuario/.config/autostart"
+10. digite "mv /etc/MundoEletronico/MundoEletronico.sh /bin"
+11. digite "exit"
+12. digite "MundoEletronico.sh"
