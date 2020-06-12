@@ -1,16 +1,27 @@
 #todos os comandos para digitar são sem aspas
 #ao final de cada linha aperte enter
 
+1. abra um terminal
+2. digite "uname -m"
+#SE APARECER NO TERMINAL "x86_64" PROSSIGA COM A INSTALAÇÃO
+#SE APARECER NO TERMINAL "i686" TENTE EM OUTRO COMPUTADOR
+3. vá na pasta do usuario extraia o arquivo (ex: "/home/usuario/MundoEletronico")
+4. no terminal digite "su" e depois digite a senha de root (m5lt1l@nln ou m5lt1l@n)
+5. digite "mkdir /etc/MundoEletronico"
+6. digite "mv /home/usuario/MundoEletronico/* /etc/MundoEletronico"
+7. digite "chmod 777 /etc/MundoEletronico"
+8. digite "cd /etc/MundoEletronico"
+9. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh"
+10. digite "mv /etc/MundoEletronico/MundoEletronico.desktop /home/usuario/.config/autostart"
+11. digite "mv /etc/MundoEletronico/MundoEletronico.sh /bin"
+12. digite "exit"
+13. reinicie o pc e aguarde o sistema iniciar para digitar a chave do cliente
 
-1. na pasta do usuario extraia o arquivo (ex: "/home/usuario/MundoEletronico")
-2. abra um terminal
-3. digite "su" e depois digite a senha de root (m5lt1l@nln ou m5lt1l@n)
-4. digite "mkdir /etc/MundoEletronico"
-5. digite "mv /home/usuario/MundoEletronico/* /etc/MundoEletronico"
-6. digite "chmod 777 /etc/MundoEletronico"
-7. digite "cd /etc/MundoEletronico"
-8. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh"
-9. digite "mv /etc/MundoEletronico/MundoEletronico.desktop /home/usuario/.config/autostart"
-10. digite "mv /etc/MundoEletronico/MundoEletronico.sh /bin"
-11. digite "exit"
-12. digite "MundoEletronico.sh"
+
+#PARA HABILITAR OS ÍCONES NA TRAY EM AMBIENTES GRÁFICOS DA GNOME
+
+1. em um terminal root "sudo apt install gnome-shell-extension-appindicator"
+2. reinicie
+3. procure por ajustes
+4. vá em Extensões
+4- habilite o Kstatusnotifieritem/appindicator
