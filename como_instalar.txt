@@ -21,7 +21,7 @@
 
 #PARA HABILITAR OS ÍCONES NA TRAY EM AMBIENTES GRÁFICOS DA GNOME
 
-1. em um terminal root "sudo apt install gnome-shell-extension-appindicator"
+1. em um terminal root "apt install gnome-shell-extension-appindicator"
 2. reinicie
 3. procure por ajustes
 4. vá em Extensões
