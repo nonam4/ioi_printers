@@ -14,8 +14,9 @@
 9. digite "chown root chrome-sandbox && chmod 4755 chrome-sandbox && chmod +x MundoEletronico.sh"
 10. digite "mv /etc/MundoEletronico/MundoEletronico.desktop /home/usuario/.config/autostart"
 11. digite "mv /etc/MundoEletronico/MundoEletronico.sh /bin"
-12. digite "exit"
-13. reinicie o pc e aguarde o sistema iniciar para digitar a chave do cliente
+12. digite "apt install unzip"
+13. digite "exit"
+14. reinicie o pc e aguarde o sistema iniciar para digitar a chave do cliente
 
 
 #PARA HABILITAR OS ÍCONES NA TRAY EM AMBIENTES GRÁFICOS DA GNOME

@@ -1,0 +1,1 @@
+unzip /etc/MundoEletronico/updates/lupdate.zip -d /etc/MundoEletronico/
