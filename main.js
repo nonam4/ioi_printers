@@ -291,7 +291,7 @@ const download = (url, versao) => {
       if(process.platform === "win32") {
         shell.openItem('C:/Program Files/Mundo Eletronico/updater.bat')
       } else {
-        shell.openItem('/etc/MundoEletronico/updater.sh')
+        shell.openExternal('/etc/MundoEletronico/updater.sh')
       }
       app.exit(0)
     }
