@@ -185,7 +185,7 @@ const gravarDados = (dados) => {
   if(dados.proxy) {
     storage.set('user', dados.user)
     storage.set('pass', dados.pass)
-    storage.set('host', dados.hots)
+    storage.set('host', dados.host)
     storage.set('port', dados.port)
   }
 
