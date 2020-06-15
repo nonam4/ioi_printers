@@ -198,9 +198,17 @@ const gravarDados = (dados) => {
 
 const receberDados = (dados) => {
   if(dados.proxy) {
+    console.log("Proxy sendo utilizado -> " + dados.user + ' - ' + dados.pass + ' - ' + dados.host + ' - ' + dados.port)
     var config = {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
-      httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
+      proxy: {
+        host: dados.host,
+        port: dados.port,
+        auth: {
+          username: dados.user,
+          password: dados.pass
+        }
+      }
     }
     axios.request(config, {
       params: {
@@ -265,20 +273,8 @@ const atualizar = (dados) => {
     tray.destroy()
     createWindow()
   }
-  if(storage.get('proxy')) {
-    var config = {
-      url: dados.url,
-      httpsAgent: new proxy('http://'+ storage.get('user') + ':' + storage.get('pass') + '@' + storage.get('host') + ':' + storage.get('port'))
-    }
-    download(config, dados.versao)
-  } else {
-    download(dados.url, dados.versao)
-  }
-}
-
-const download = (url, versao) => {
   DownloadManager.download({
-    url: url
+    url: dados.url
   }, function (error, info) {
     if (error) {
       if(tela) {webContents.send('erro', "Não foi possível baixar as atualizações, reinicando em 3 segundos")}
