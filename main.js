@@ -198,7 +198,6 @@ const gravarDados = (dados) => {
 
 const receberDados = (dados) => {
   if(dados.proxy) {
-    console.log("Proxy sendo utilizado -> " + dados.user + ' - ' + dados.pass + ' - ' + dados.host + ' - ' + dados.port)
     var config = {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
       proxy: {
