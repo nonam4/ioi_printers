@@ -1,13 +1,14 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
 const path = require('path')
-const DownloadManager = require("electron-download-manager")
 const axios = require('axios')
 const proxy = require('https-proxy-agent')
 const SnmpManager = require('net-snmp')
 const Storage = require('./storage.js')
 const Printers = require('./impressoras.js')
 const storage = new Storage({ configName: 'settings', defaults: { versao: '0.1.0', dhcp: true }})
+const DownloadManager = require("electron-download-manager")
+DownloadManager.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 const dhcp = () => {
   var ip = require('my-local-ip')().split('.')
   return ip[0] + '.' + ip[1] + '.' + ip[2] + '.'
@@ -17,13 +18,6 @@ if(process.platform === "win32") {
   icon = "resources/icon.png"
 } else {
   icon = "/etc/MundoEletronico/resources/icon.png"
-}
-
-
-if(process.platform === "win32") {
-  DownloadManager.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
-} else {
-  DownloadManager.register({downloadFolder:'/etc/MundoEletronico/updates'})
 }
 
 //status: atualizando, recebendo, dados
