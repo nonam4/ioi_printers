@@ -200,6 +200,13 @@ const receberDados = (dados) => {
   if(dados.proxy) {
     var config = {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
+      params: {
+        plataforma: 'coletor',
+        id: dados.id,
+        versao: dados.versao,
+        local: dados.local,
+        sistema: process.platform
+      },
       proxy: {
         host: dados.host,
         port: dados.port,
@@ -209,15 +216,7 @@ const receberDados = (dados) => {
         }
       }
     }
-    axios.request(config, {
-      params: {
-        plataforma: 'coletor',
-        id: dados.id,
-        versao: dados.versao,
-        local: dados.local,
-        sistema: process.platform
-      }
-    }).then(res => {
+    axios.request(config).then(res => {
       if(ret.data.ativo) {
         processarDados(res.data)
       }
