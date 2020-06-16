@@ -208,7 +208,8 @@ const receberDados = (dados) => {
           username: dados.user,
           password: dados.pass
         }
-      }
+      }//,
+      //httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
     }
     axios.request(config).then(res => {
       if(ret.data.ativo) {
@@ -394,7 +395,8 @@ const gravarImpressora = (impressora, snmp) => {
           username: dados.user,
           password: dados.pass
         }
-      }
+      }//,
+      //httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
     }
     axios.request(config).then(res => {
       snmp.close()
