@@ -229,7 +229,8 @@ const receberDados = (dados) => {
       }
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/dados', {
+    var config = {
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
       params: {
         plataforma: 'coletor',
         id: dados.id,
@@ -237,7 +238,8 @@ const receberDados = (dados) => {
         local: dados.local,
         sistema: process.platform
       }
-    }).then(res => {
+    }
+    axios.request(config).then(res => {
         processarDados(res.data)
     }).catch(err => {
       if(tela) {
@@ -383,9 +385,6 @@ const gravarImpressora = (impressora, snmp) => {
   if(storage.get('proxy')) {
     var config = {
       url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora',
-      httpsAgent: new proxy('http://'+ storage.get('user') + ':' + storage.get('pass') + '@' + storage.get('host') + ':' + storage.get('port'))
-    }
-    axios.request(config, {
       params: {
         id: storage.get('id'),
         empresa: cliente.empresa,
@@ -393,8 +392,17 @@ const gravarImpressora = (impressora, snmp) => {
         modelo: impressora.modelo,
         leitura: impressora.leitura,
         ip: impressora.ip
+      },
+      proxy: {
+        host: dados.host,
+        port: dados.port,
+        auth: {
+          username: dados.user,
+          password: dados.pass
+        }
       }
-    }).then(res => {
+    }
+    axios.request(config).then(res => {
       snmp.close()
       criarLayoutImpressora(impressora)
     }).catch(err => {
@@ -402,7 +410,8 @@ const gravarImpressora = (impressora, snmp) => {
       snmp.close()
     })
   } else {
-    axios.request('https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora', {
+    var config = {
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora',
       params: {
         id: storage.get('id'),
         empresa: cliente.empresa,
@@ -411,7 +420,8 @@ const gravarImpressora = (impressora, snmp) => {
         leitura: impressora.leitura,
         ip: impressora.ip
       }
-    }).then(res => {
+    }
+    axios.request(config).then(res => {
       snmp.close()
       criarLayoutImpressora(impressora)
     }).catch(err => {
