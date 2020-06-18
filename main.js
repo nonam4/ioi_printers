@@ -2,7 +2,7 @@
 const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
 const path = require('path')
 const axios = require('axios')
-const proxy = require('https-proxy-agent')
+const tunnel = require('tunnel')
 const SnmpManager = require('net-snmp')
 const Storage = require('./storage.js')
 const Printers = require('./impressoras.js')
@@ -45,14 +45,17 @@ const createWindow = () => {
   mainWindow.removeMenu()
   // abre o console
   //mainWindow.webContents.openDevTools()
-  mainWindow.on('close', function (event) {
-      if(!app.isQuiting){
-          event.preventDefault()
-          tela = false
-          mainWindow.hide()
-          criarTray()
-      }
-      return false
+  mainWindow.on('close', (event) => {
+    if(status == "dados") {
+      event.preventDefault()
+      webContents.send('erro', 'Entre em contato com o suporte via WhatsApp - (47) 99964-9667')
+    } else if(!app.isQuiting){
+      event.preventDefault()
+      tela = false
+      mainWindow.hide()
+      criarTray()
+    }
+    return false
   })
 
   webContents = mainWindow.webContents
@@ -134,7 +137,8 @@ const conferirDados = () => {
   dados.dhcp = storage.get('dhcp')
   dados.ip = storage.get('ip')
 
-  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined) {
+  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined 
+    || dados.proxy === '' || dados.id === '' || dados.dhcp === '') {
     pedirDados()
   } else {
     receberDados(dados)
@@ -192,8 +196,20 @@ const gravarDados = (dados) => {
 
 const receberDados = (dados) => {
   if(dados.proxy) {
+    var agent = tunnel.httpsOverHttp({
+      proxy: {
+        host: dados.host,
+        port: Number(dados.port),
+        proxyAuth: dados.user + ':' + dados.pass
+      }/*,
+      headers: {
+        'User-Agent': 'Chrome'
+      },
+      rejectUnauthorized: false
+      */
+    })
     var config = {
-      url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados',
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/dados:443',
       params: {
         plataforma: 'coletor',
         id: dados.id,
@@ -201,21 +217,15 @@ const receberDados = (dados) => {
         local: dados.local,
         sistema: process.platform
       },
-      proxy: {
-        host: dados.host,
-        port: dados.port,
-        auth: {
-          username: dados.user,
-          password: dados.pass
-        }
-      }//,
-      //httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
+      proxy: false,
+      httpsAgent: agent
     }
     axios.request(config).then(res => {
       if(ret.data.ativo) {
         processarDados(res.data)
       }
     }).catch(err => {
+      console.log(err)
       if(tela) {
         webContents.send('erro', "Verifique os dados do PROXY e se a ID está correta")
         webContents.send('removerLoad')
@@ -378,8 +388,20 @@ const marcaExiste = (fabricante) => {
 
 const gravarImpressora = (impressora, snmp) => {
   if(storage.get('proxy')) {
+    var agent = tunnel.httpsOverHttp({
+      proxy: {
+        host: dados.host,
+        port: Number(dados.port),
+        proxyAuth: dados.user + ':' + dados.pass
+      }/*,
+      headers: {
+        'User-Agent': 'Chrome'
+      },
+      rejectUnauthorized: false
+      */
+    })
     var config = {
-      url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora',
+      url: 'https://us-central1-ioi-printers.cloudfunctions.net/gravarImpressora:443',
       params: {
         id: storage.get('id'),
         empresa: cliente.empresa,
@@ -388,20 +410,14 @@ const gravarImpressora = (impressora, snmp) => {
         leitura: impressora.leitura,
         ip: impressora.ip
       },
-      proxy: {
-        host: dados.host,
-        port: dados.port,
-        auth: {
-          username: dados.user,
-          password: dados.pass
-        }
-      }//,
-      //httpsAgent: new proxy('http://'+ dados.user + ':' + dados.pass + '@' + dados.host + ':' + dados.port)
+      proxy: false,
+      httpsAgent: agent
     }
     axios.request(config).then(res => {
       snmp.close()
       criarLayoutImpressora(impressora)
     }).catch(err => {
+      console.log(err)
       if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
       snmp.close()
     })
@@ -464,27 +480,25 @@ const criarLayoutImpressora = (impressora) => {
       }
     }
   } else {
-    cliente.impressoras = {
-      [impressora.serial]: {
-        franquia: 0,
-        ip: impressora.ip,
-        modelo: impressora.modelo,
-        setor: "Não informado",
-        ativa: true,
-        tinta: {
-          capacidade: "ilimitado",
-          cheio: impressora.leitura,
-          impresso: 0,
-          nivel: 100
-        }, leituras: {
-          [ano + "-" + mes]: {
-            inicial : {
-              valor: impressora.leitura,
-              dia: dia
-            }, final : {
-              valor: impressora.leitura,
-              dia: dia
-            }
+    cliente.impressoras[impressora.serial] = {
+      franquia: 0,
+      ip: impressora.ip,
+      modelo: impressora.modelo,
+      setor: "Não informado",
+      ativa: true,
+      tinta: {
+        capacidade: "ilimitado",
+        cheio: impressora.leitura,
+        impresso: 0,
+        nivel: 100
+      }, leituras: {
+        [ano + "-" + mes]: {
+          inicial : {
+            valor: impressora.leitura,
+            dia: dia
+          }, final : {
+            valor: impressora.leitura,
+            dia: dia
           }
         }
       }
