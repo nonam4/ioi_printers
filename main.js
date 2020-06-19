@@ -6,7 +6,7 @@ const tunnel = require('tunnel')
 const SnmpManager = require('net-snmp')
 const Storage = require('./storage.js')
 const Printers = require('./impressoras.js')
-const storage = new Storage({ configName: 'settings', defaults: { versao: '0.1.0', dhcp: true }})
+const storage = new Storage({ configName: 'settings', defaults: { proxy: false, dhcp: true }})
 const DownloadManager = require("electron-download-manager")
 DownloadManager.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 const dhcp = () => {
