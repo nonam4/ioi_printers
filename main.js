@@ -3,21 +3,22 @@ const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
 const path = require('path')
 const axios = require('axios')
 const tunnel = require('tunnel')
-const SnmpManager = require('net-snmp')
+const snpm = require('net-snmp')
+const printers = require('./impressoras.js')
 const Storage = require('./storage.js')
-const Printers = require('./impressoras.js')
 const storage = new Storage({ configName: 'settings', defaults: { proxy: false, dhcp: true }})
-const DownloadManager = require("electron-download-manager")
-DownloadManager.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
+const downloader = require("electron-download-manager")
+downloader.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 const dhcp = () => {
   var ip = require('my-local-ip')().split('.')
   return ip[0] + '.' + ip[1] + '.' + ip[2] + '.'
 }
-var icon
-if(process.platform === "win32") {
-  icon = "resources/icon.png"
-} else {
-  icon = "/etc/MundoEletronico/resources/icon.png"
+const icon = () => {
+  if(process.platform === "win32") {
+    return "resources/icon.png"
+  } else {
+    return "/etc/MundoEletronico/resources/icon.png"
+  }
 }
 
 //status: atualizando, recebendo, dados
@@ -33,7 +34,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: icon,
+    icon: icon(),
     maximizable: false,
     resizable: false,
     webPreferences: {
@@ -45,7 +46,7 @@ const createWindow = () => {
   mainWindow.removeMenu()
   // abre o console
   //mainWindow.webContents.openDevTools()
-  mainWindow.on('close', (event) => {
+  mainWindow.on('close', event => {
     if(status == "dados") {
       event.preventDefault()
       webContents.send('erro', 'Entre em contato com o suporte via WhatsApp - (47) 99964-9667')
@@ -61,22 +62,22 @@ const createWindow = () => {
   webContents = mainWindow.webContents
   switch (status) {
     case "atualizando":
-      webContents.on('did-finish-load', function() {
+      webContents.on('did-finish-load', () => {
         webContents.send('update')
       })
       break
     case "recebendo":
-      webContents.on('did-finish-load', function() {
+      webContents.on('did-finish-load', () => {
         webContents.send('load')
       })
       break
     case "dados":
-      webContents.on('did-finish-load', function() {
+      webContents.on('did-finish-load', () => {
         webContents.send('dados', dhcp())
       })
       break
     default:
-      webContents.on('did-finish-load', function() {
+      webContents.on('did-finish-load', () => {
         webContents.send('principal', cliente, app.getVersion())
       })
   }
@@ -96,11 +97,11 @@ ipcMain.on('gravarDados', (event, dados) => {
   gravarDados(dados)
 })
 
-ipcMain.on('atualizarDados', (event) => {
+ipcMain.on('atualizarDados', event => {
   conferirDados()
 })
 
-ipcMain.on('editarDados', (event) => {
+ipcMain.on('editarDados', event => {
   editarDados()
 })
 
@@ -108,11 +109,11 @@ ipcMain.on('editarDados', (event) => {
 / minhas funções
 */
 const criarTray = () => {
-  tray = new Tray(icon)
+  tray = new Tray(icon())
   tray.setToolTip('Mundo Eletrônico')
 
   var contextMenu = Menu.buildFromTemplate([
-    { label: 'Abrir', click:  function(){
+    { label: 'Abrir', click:  () => {
       tray.destroy()
       createWindow()
     }}
@@ -175,7 +176,7 @@ const editarDados = () => {
   webContents.send('editarDados', dados)
 }
 
-const gravarDados = (dados) => {
+const gravarDados = dados => {
   storage.set('id', dados.id)
   storage.set('local', dados.local)
 
@@ -194,7 +195,7 @@ const gravarDados = (dados) => {
   conferirDados()
 }
 
-const receberDados = (dados) => {
+const receberDados = dados => {
   if(dados.proxy) {
     var agent = tunnel.httpsOverHttp({
       proxy: {
@@ -257,7 +258,7 @@ const receberDados = (dados) => {
   }
 }
 
-const processarDados = (dados) => {
+const processarDados = dados => {
 
   if(dados.atualizar && process.platform === "win32") {
     atualizar(dados)
@@ -271,16 +272,16 @@ const processarDados = (dados) => {
   if(tela && !dados.atualizar) {webContents.send('removerLoad')}
 }
 
-const atualizar = (dados) => {
+const atualizar = dados => {
   status = "atualizando"
 
   if(tela) { webContents.send('update') } else {
     tray.destroy()
     createWindow()
   }
-  DownloadManager.download({
+  downloader.download({
     url: dados.url
-  }, function (error, info) {
+  }, (error, info) => {
     if (error) {
       if(tela) {webContents.send('erro', "Não foi possível baixar as atualizações, reinicando em 3 segundos")}
       setTimeout(() => {
@@ -316,8 +317,8 @@ const buscarIps = () => {
   }, 3600000)
 }
 
-const checarFabricante = (ip) => {
-  const snmp = SnmpManager.createSession(ip, 'public')
+const checarFabricante = ip => {
+  const snmp = snpm.createSession(ip, 'public')
   var oid = ["1.3.6.1.2.1.1.1.0"]
   snmp.get(oid, (error, res) => {
     if (!error) {
@@ -338,23 +339,23 @@ const selecionarModelo = (fabricante, snmp, ip) => {
   var marca = marcaExiste(fabricante)
   if(marca != null) {
     if(marca == "aficio sp 3500") {
-      impressora = new Printers.Aficio3500(snmp, ip)
+      impressora = new printers.Aficio3500(snmp, ip)
     } else if(marca == "aficio sp 3510") {
-      impressora = new Printers.Aficio3510(snmp, ip)
+      impressora = new printers.Aficio3510(snmp, ip)
     } else if(marca == "brother") {
-      impressora = new Printers.Brother(snmp, ip)
+      impressora = new printers.Brother(snmp, ip)
     } else if(marca == "canon") {
-      impressora = new Printers.Canon(snmp, ip)
+      impressora = new printers.Canon(snmp, ip)
     } else if(marca == "epson") {
-      impressora = new Printers.Epson(snmp, ip)
+      impressora = new printers.Epson(snmp, ip)
     } else if(marca == "hp") {
-      impressora = new Printers.Hp(snmp, ip)
+      impressora = new printers.Hp(snmp, ip)
     } else if(marca == "lexmark") {
-      impressora = new Printers.Lexmark(snmp, ip)
+      impressora = new printers.Lexmark(snmp, ip)
     } else if(marca == "oki") {
-      impressora = new Printers.Oki(snmp, ip)
+      impressora = new printers.Oki(snmp, ip)
     } else if(marca == "samsung") {
-      impressora = new Printers.Samsung(snmp, ip)
+      impressora = new printers.Samsung(snmp, ip)
     }
 
     if(impressora != null) {
@@ -373,7 +374,7 @@ const selecionarModelo = (fabricante, snmp, ip) => {
   }
 }
 
-const marcaExiste = (fabricante) => {
+const marcaExiste = fabricante => {
   var marcas = ["aficio sp 3500", "aficio sp 3510", "brother", "canon", "epson", "hp", "lexmark", "oki", "samsung"]
   var res = null
 
@@ -443,7 +444,7 @@ const gravarImpressora = (impressora, snmp) => {
   }
 }
 
-const criarLayoutImpressora = (impressora) => {
+const criarLayoutImpressora = impressora => {
   var data = new Date()
   var ano = data.getFullYear()
   var mes = data.getMonth() + 1;

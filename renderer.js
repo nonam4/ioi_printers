@@ -2,59 +2,59 @@ const renderer = require('electron').ipcRenderer
 var cliente
 var versao
 
-renderer.on('dados', function(event, ip) {
+renderer.on('dados', (event, ip) => {
   criarDados(ip)
 })
 
-renderer.on('editarDados', function(event, dados) {
+renderer.on('editarDados', (event, dados) => {
   editarDados(dados)
 })
 
-renderer.on('update', function(event) {
+renderer.on('update', event => {
   criarUpdate()
 })
 
-renderer.on('load', function(event) {
+renderer.on('load', event => {
   criarLoad()
 })
 
-renderer.on('removerLoad', function(event) {
+renderer.on('removerLoad', event => {
   removerLoad()
 })
 
-renderer.on('principal', function(event, dados, version) {
+renderer.on('principal', (event, dados, version) => {
   criarPrincipal(dados, version)
 })
 
-renderer.on('recriarPrincipal', function(event, dados) {
+renderer.on('recriarPrincipal', (event, dados) => {
   recriarPrincipal(dados)
 })
 
-renderer.on('erro', function(event, mensagem) {
+renderer.on('erro', (event, mensagem) => {
   criarErro(mensagem)
 })
 
-renderer.on('log', function(event, mensagem) {
+renderer.on('log', (event, mensagem) => {
   console.log(mensagem)
 })
 
 /*
 * erros
 */
-const criarErro = (mensagem) => {
+const criarErro = mensagem => {
   var erro = document.getElementById("error")
   erro.innerHTML = mensagem
   erro.style.bottom = "0px"
 
-  setTimeout(function(){
+  setTimeout(() => {
     erro.style.bottom = "-100px"
-  }, 3000)
+  }, 4000)
 }
 
 /*
 * tela de dados
 */
-const criarDados = (ip) => {
+const criarDados = ip => {
   document.getElementById('body').innerHTML = ""
   criarLoad()
   var load = document.getElementsByTagName("load")[0]
@@ -63,12 +63,12 @@ const criarDados = (ip) => {
   document.getElementById("dhcpip").value = ip
   document.getElementById("host").value = ip + "254"
   funcoesDados()
-  setTimeout(function(){
+  setTimeout(() => {
     removerLoad()
   }, 1000)
 }
 
-const editarDados = (arg) => {
+const editarDados = arg => {
   document.getElementById('body').innerHTML = ""
   criarLoad()
   var dados = document.getElementById("tdados").content.cloneNode(true)
@@ -93,7 +93,7 @@ const editarDados = (arg) => {
     document.getElementById('dhcpfalse').checked = true
   }
   funcoesDados()
-  setTimeout(function(){
+  setTimeout(() => {
     removerLoad()
   }, 1000)
 }
@@ -178,7 +178,7 @@ const removerLoad = () => {
   for(let div of load) {
       div.style.opacity = 0
   }
-  setTimeout(function(){
+  setTimeout(() => {
     for(let div of load) {
       document.getElementById("body").removeChild(div)
     }
@@ -195,7 +195,7 @@ const criarPrincipal = (dados, version) => {
   document.getElementById("body").appendChild(principal)
   preencherPrincipal(dados, version)
   funcoesPrincipal()
-  setTimeout(function(){
+  setTimeout(() => {
     removerLoad()
   }, 1000)
 }
@@ -317,7 +317,7 @@ const preencherPrincipal = (dados, version) => {
   }
 }
 
-const gerarDatasDeListagem = (cliente) => {
+const gerarDatasDeListagem = cliente => {
 
   var dataAtual = new Date()
   var ano = dataAtual.getFullYear()
@@ -357,21 +357,16 @@ const funcoesPrincipal = () => {
   })
 }
 
-const alterarDatas = (cliente) => {
+const alterarDatas = cliente => {
   criarLoad()
   preencherImpressoras(cliente, versao)
-  setTimeout(function(){
+  setTimeout(() => {
     removerLoad()
   }, 1000)
 }
 
-const preencherImpressoras = (dados, version) => {
+const preencherImpressoras = dados => {
   document.getElementById("impressoras").innerHTML = ""
-  var data = new Date()
-  var ano = data.getFullYear()
-  var mes = data.getMonth() + 1
-  if(mes < 10) { mes = "0" + mes }
-  var meses = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
   var datas = document.getElementById("dadosmes")
   var listagem = datas.options[datas.selectedIndex].value
