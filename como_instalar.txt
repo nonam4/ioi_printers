@@ -17,7 +17,6 @@
 12. digite "exit"
 13. reinicie o pc e aguarde o sistema iniciar para digitar a chave do cliente
 
-
 #PARA HABILITAR OS ÍCONES NA TRAY EM AMBIENTES GRÁFICOS DA GNOME
 
 1. em um terminal root "apt install gnome-shell-extension-appindicator"
@@ -25,3 +24,9 @@
 3. procure por ajustes
 4. vá em Extensões
 4- habilite o Kstatusnotifieritem/appindicator
+
+#PARA DESINSTALAR
+
+1. como root digite "rm -r /etc/MundoEletronico"
+2. digite "rm /bin/MundoEletronico.sh"
+3. digite "rm /home/usuario/.config/autostart/MundoEletronico.desktop"
