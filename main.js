@@ -8,10 +8,33 @@ const Storage = require('./storage.js')
 const storage = new Storage({ configName: 'settings', defaults: { proxy: false, dhcp: true }})
 const downloader = require("electron-download-manager")
 downloader.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
+
 const dhcp = () => {
-  var ip = require('my-local-ip')().split('.')
-  return ip[0] + '.' + ip[1] + '.' + ip[2] + '.'
+  return new Promise(resolve => {
+    const getip = () => {
+      var interfaces = require('os').networkInterfaces()
+      const myIp = () => {
+        for(var k in interfaces) {
+          var inter = interfaces[k]
+          for(var j in inter)
+            if(inter[j].family === 'IPv4' && !inter[j].internal)
+              return inter[j].address
+        }
+      }
+      var ip = myIp()
+      if(ip != undefined) {
+        ip = ip.split('.')
+        resolve(ip[0] + '.' + ip[1] + '.' + ip[2] + '.')
+      } else {
+        setTimeout(() => {
+          getip()
+        }, 2000)
+      }
+    }
+    getip()
+  })
 }
+
 const icon = () => {
   if(process.platform === "win32") {
     return "resources/icon.png"
@@ -71,8 +94,9 @@ const createWindow = () => {
       })
       break
     case "dados":
-      webContents.on('did-finish-load', () => {
-        webContents.send('dados', dhcp())
+      webContents.on('did-finish-load', async () => {
+        webContents.send('load')
+        webContents.send('dados', await dhcp())
       })
       break
     default:
@@ -151,7 +175,7 @@ const pedirDados = () => {
   createWindow()
 }
 
-const editarDados = () => {
+const editarDados = async () => {
   status = "dados"
 
   var dados = new Object()
@@ -170,7 +194,8 @@ const editarDados = () => {
   if(!dados.dhcp) {
     dados.ip = storage.get('ip')
   } else {
-    dados.ip = dhcp()
+    dados.ip = await dhcp()
+    console.log(' 190 ', dados.ip)
   }
   webContents.send('editarDados', dados)
 }
@@ -279,13 +304,14 @@ const atualizar = dados => {
   })
 }
 
-const buscarIps = () => {
+const buscarIps = async () => {
   status = null
   var ips = null
   if(!storage.get('dhcp')) {
     ips = storage.get('ip').split(";")
   } else {
-    ips = dhcp().split(";")
+    var ip = await dhcp()
+    ips = ip.split(";")
   }
   for(var x = 0; x < ips.length; x++) {
     var ip = ips[x]
@@ -341,7 +367,8 @@ const selecionarModelo = (fabricante, snmp, ip) => {
 
     if(impressora != null) {
       impressora.pegarDados().then(res => {
-        if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null) {
+        if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null
+          && impressora.modelo != '' && impressora.serial != '' && impressora.leitura != '') {
           gravarImpressora(impressora, snmp)
         } else {
           snmp.close()
@@ -443,7 +470,7 @@ const criarLayoutImpressora = impressora => {
       }
       //atualiza os niveis de tinta de acordo com a capacidade dele
       if(cliente.impressoras[impressora.serial].tinta.capacidade !== "ilimitado") {
-        cliente.impressoras[impressora.serial].tinta = new Object()
+        //cliente.impressoras[impressora.serial].tinta = new Object()
         cliente.impressoras[impressora.serial].tinta.impresso = impressora.leitura - cliente.impressoras[impressora.serial].tinta.cheio
         cliente.impressoras[impressora.serial].tinta.nivel = parseInt(100 - ((100 * cliente.impressoras[impressora.serial].tinta.impresso) / cliente.impressoras[impressora.serial].tinta.capacidade))
       }

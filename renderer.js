@@ -56,16 +56,11 @@ const criarErro = mensagem => {
 */
 const criarDados = ip => {
   document.getElementById('body').innerHTML = ""
-  criarLoad()
-  var load = document.getElementsByTagName("load")[0]
-  var dados = document.getElementById("tdados").content.cloneNode(true)
-  document.getElementById("body").appendChild(dados)
+  var dado = document.getElementById("tdados").content.cloneNode(true)
+  document.getElementById("body").appendChild(dado)
   document.getElementById("dhcpip").value = ip
   document.getElementById("host").value = ip + "254"
   funcoesDados()
-  setTimeout(() => {
-    removerLoad()
-  }, 1000)
 }
 
 const editarDados = arg => {
@@ -168,13 +163,12 @@ const criarUpdate = () => {
 
 const criarLoad = () => {
   var load = document.getElementById("tload").content.cloneNode(true)
-  load.querySelector("#loadstatus").innerHTML = "Estamos processando os dados, por favor aguarde..."
+  load.querySelector("#loadstatus").innerHTML = "Estamos preparando dados, por favor aguarde..."
   document.getElementById("body").appendChild(load)
 }
 
 const removerLoad = () => {
   var load = document.getElementsByTagName("load")
-
   for(let div of load) {
       div.style.opacity = 0
   }
@@ -443,7 +437,6 @@ const preencherImpressoras = dados => {
   } else {
     dados.excedentes = "S/F"
     dados.franquia.valor = "S/F"
-    dados.impresso = ret.cliente.impresso + " págs"
   }
 
   document.body.querySelector("#dadosfranquia").innerHTML = dados.franquia.valor + " págs"
