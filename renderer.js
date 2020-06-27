@@ -1,6 +1,4 @@
 const renderer = require('electron').ipcRenderer
-var cliente
-var versao
 
 renderer.on('dados', (event, ip) => {
   criarDados(ip)
@@ -246,7 +244,6 @@ const preencherPrincipal = (dados, version) => {
         /*
         * cria a interface
         */
-
         var layout = document.getElementById("timpressora").content.cloneNode(true)
         layout.querySelector("impressora").id = Object.keys(impressoras)[x]
         layout.querySelector("#impressoramodelo").innerHTML = impressora.modelo
@@ -303,7 +300,6 @@ const preencherPrincipal = (dados, version) => {
   } else {
     dados.excedentes = "S/F"
     dados.franquia.valor = "S/F"
-    dados.impresso = dados.impresso
 
     document.body.querySelector("#dadosfranquia").innerHTML = dados.franquia.valor
     document.body.querySelector("#dadosimpresso").innerHTML = dados.impresso + " págs"
@@ -353,7 +349,7 @@ const funcoesPrincipal = () => {
 
 const alterarDatas = cliente => {
   criarLoad()
-  preencherImpressoras(cliente, versao)
+  preencherImpressoras(cliente)
   setTimeout(() => {
     removerLoad()
   }, 1000)
