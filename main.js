@@ -161,7 +161,7 @@ const conferirDados = () => {
   dados.dhcp = storage.get('dhcp')
   dados.ip = storage.get('ip')
 
-  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined 
+  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined
     || dados.proxy === '' || dados.id === '' || dados.dhcp === '') {
     pedirDados()
   } else {
@@ -476,6 +476,7 @@ const criarLayoutImpressora = impressora => {
       }
     }
   } else {
+    cliente.impressoras = new Object()
     cliente.impressoras[impressora.serial] = {
       franquia: 0,
       ip: impressora.ip,
