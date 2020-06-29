@@ -470,13 +470,14 @@ const criarLayoutImpressora = impressora => {
       }
       //atualiza os niveis de tinta de acordo com a capacidade dele
       if(cliente.impressoras[impressora.serial].tinta.capacidade !== "ilimitado") {
-        //cliente.impressoras[impressora.serial].tinta = new Object()
         cliente.impressoras[impressora.serial].tinta.impresso = impressora.leitura - cliente.impressoras[impressora.serial].tinta.cheio
         cliente.impressoras[impressora.serial].tinta.nivel = parseInt(100 - ((100 * cliente.impressoras[impressora.serial].tinta.impresso) / cliente.impressoras[impressora.serial].tinta.capacidade))
       }
     }
   } else {
-    cliente.impressoras = new Object()
+    if(cliente.impressoras == undefined) {
+      cliente.impressoras = new Object()
+    }
     cliente.impressoras[impressora.serial] = {
       franquia: 0,
       ip: impressora.ip,
