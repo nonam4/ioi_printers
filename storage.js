@@ -34,7 +34,6 @@ const path = () => {
 const getData = (path, defaults) => {
   return new Promise(resolve => {
     fs.readFile(path, "utf8", (err, data) => {
-      console.log(data)
       if(err) {
         console.log(err)
         resolve(defaults)
