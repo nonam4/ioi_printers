@@ -3,9 +3,9 @@ const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
 const path = require('path')
 const axios = require('axios')
 const snpm = require('net-snmp')
+const fs = require('fs')
 const printers = require('./impressoras.js')
-const Storage = require('./storage.js')
-const storage = new Storage({ configName: 'settings', defaults: { proxy: false, dhcp: true }})
+const storage = new (require('./storage.js'))()
 const downloader = require("electron-download-manager")
 downloader.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 
@@ -110,7 +110,9 @@ const createWindow = () => {
 // quando o app estiver pronto
 app.on('ready', () => {
   criarTray()
-  conferirDados()
+  storage.init(() => {
+    conferirDados()
+  })
 })
 
 /*
@@ -195,7 +197,6 @@ const editarDados = async () => {
     dados.ip = storage.get('ip')
   } else {
     dados.ip = await dhcp()
-    console.log(' 190 ', dados.ip)
   }
   webContents.send('editarDados', dados)
 }
@@ -255,7 +256,6 @@ const receberDados = dados => {
   axios.request(config).then(res => {
     processarDados(res.data)
   }).catch(err => {
-    console.log(err)
     if(tela) {
       webContents.send('erro', 'Algum erro aconteceu ao receber os dados!')
       webContents.send('removerLoad')
