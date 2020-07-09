@@ -3,7 +3,6 @@ const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
 const path = require('path')
 const axios = require('axios')
 const snpm = require('net-snmp')
-const fs = require('fs')
 const printers = require('./impressoras.js')
 const storage = new (require('./storage.js'))()
 const downloader = require("electron-download-manager")
@@ -112,6 +111,9 @@ app.on('ready', () => {
   criarTray()
   storage.init(() => {
     conferirDados()
+    setTimeout(() => {
+      conferirDados()
+    }, 3600000)
   })
 })
 
@@ -202,22 +204,27 @@ const editarDados = async () => {
 }
 
 const gravarDados = dados => {
-  storage.set('id', dados.id)
-  storage.set('local', dados.local)
 
-  storage.set('proxy', dados.proxy)
+  var local = new Object()
+  local.id = dados.id
+  local.local = dados.local
+
+  local.proxy = dados.proxy
   if(dados.proxy) {
-    storage.set('user', dados.user)
-    storage.set('pass', dados.pass)
-    storage.set('host', dados.host)
-    storage.set('port', dados.port)
+    local.user = dados.user
+    local.pass = dados.pass
+    local.host = dados.host
+    local.port = dados.port
   }
 
-  storage.set('dhcp', dados.dhcp)
+  local.dhcp = dados.dhcp
   if(!dados.dhcp) {
-    storage.set('ip', dados.ip)
+    local.ip = dados.ip
   }
-  conferirDados()
+
+  storage.set(local, () => {
+    conferirDados()
+  })
 }
 
 const receberDados = dados => {
@@ -256,11 +263,10 @@ const receberDados = dados => {
   axios.request(config).then(res => {
     processarDados(res.data)
   }).catch(err => {
+    storage.log('Receber dados => ' + err)
     if(tela) {
       webContents.send('erro', 'Algum erro aconteceu ao receber os dados!')
       webContents.send('removerLoad')
-    } else {
-      pedirDados()
     }
   })
 }
@@ -319,9 +325,6 @@ const buscarIps = async () => {
       checarFabricante(ip + y)
     }
   }
-  setTimeout(() => {
-    conferirDados()
-  }, 3600000)
 }
 
 const checarFabricante = ip => {

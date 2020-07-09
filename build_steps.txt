@@ -1,0 +1,24 @@
+WINDOWS
+
+deletar a pasta dist e o conteudo da pasta releases
+no cmd digitar "npm run windows"
+copiar o updater.bat, a pasta logs e a pasta resources para a pasta dist
+realizar a criação do instalador pelo setup_windows.iss
+ir na pasta dist e compactar todos os arquivos como wupdate.zip (exceto o updater.bat e a pasta logs)
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------
+LINUX
+
+delete todas as pastas do codigo na VM
+faça o clone do git
+digite npm install no terminal
+faça a build no linux
+copiar o MundoEletronico.desktop, MundoEletronico.sh, como_instalar.txt, a pasta logs e a pasta resources para a pasta dist
+criar a release (compactar todos os arquivos como setup_linux.zip)
+
