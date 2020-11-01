@@ -16,9 +16,9 @@ ir na pasta dist e compactar todos os arquivos como wupdate.zip (exceto o update
 LINUX
 
 delete todas as pastas do codigo na VM
-faça o clone do git
-digite npm install no terminal
-faça a build no linux
+faça o clone do git (git clone https://github.com/nonam4/ioi_printers)
+digite cd ioi_printers e depois npm install no terminal
+faça a build no linux (npm run linux)
 copiar o MundoEletronico.desktop, MundoEletronico.sh, como_instalar.txt, a pasta logs e a pasta resources para a pasta dist
 criar a release (compactar todos os arquivos como setup_linux.zip)
 
