@@ -15,10 +15,10 @@ DefaultDirName=C:\Program Files\{#MyAppName}
 DisableDirPage=yes
 DisableWelcomePage=yes
 DisableProgramGroupPage=yes
-LicenseFile=D:\Backups\ioi\ioi_printers\license.txt
-OutputDir=D:\Backups\ioi\ioi_printers\releases
+LicenseFile=D:\Projetos\ioi\ioi_printers\license.txt
+OutputDir=D:\Projetos\ioi\ioi_printers\releases
 OutputBaseFilename=setup_windows
-SetupIconFile=D:\Backups\ioi\ioi_printers\icon.ico
+SetupIconFile=D:\Projetos\ioi\ioi_printers\icon.ico
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
@@ -30,8 +30,8 @@ Name: "{app}"; Permissions: everyone-full
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 
 [Files]
-Source: "D:\Backups\ioi\ioi_printers\dist\win-ia32-unpacked\Printers.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Backups\ioi\ioi_printers\dist\win-ia32-unpacked\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "D:\Projetos\ioi\ioi_printers\dist\win-ia32-unpacked\Printers.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projetos\ioi\ioi_printers\dist\win-ia32-unpacked\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
 
 [Icons] 
 Name: "{commonstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
