@@ -304,7 +304,7 @@ const atualizar = dados => {
       }, 3000)
       return
     } else {
-      shell.openItem('C:/Program Files/Mundo Eletronico/updater.bat')
+      shell.openExternal('file://C:/Program Files/Mundo Eletronico/updater.bat')
       app.exit(0)
     }
   })
