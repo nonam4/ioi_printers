@@ -1,12 +1,12 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, Tray, ipcMain, shell} = require('electron')
-const path = require('path')
-const axios = require('axios')
-const snpm = require('net-snmp')
-const printers = require('./impressoras.js')
+import { app, BrowserWindow, Menu, Tray, ipcMain, shell } from 'electron'
+import { join } from 'path'
+import { request } from 'axios'
+import { createSession } from 'net-snmp'
+import { Aficio3500, Aficio3510, Brother, Canon, Epson, Hp, Lexmark, Oki, Samsung } from './impressoras.js'
 const storage = new (require('./storage.js'))()
-const downloader = require("electron-download-manager")
-downloader.register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
+import { register, download } from "electron-download-manager"
+register({downloadFolder:'C:/Program Files/Mundo Eletronico/updates'})
 
 const dhcp = () => {
   return new Promise(resolve => {
@@ -59,7 +59,7 @@ const createWindow = () => {
     maximizable: false,
     resizable: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: join(__dirname, 'preload.js'),
       nodeIntegration: true
     }
   })
@@ -263,7 +263,7 @@ const receberDados = dados => {
       }
     }
   }
-  axios.request(config).then(res => {
+  request(config).then(res => {
     processarDados(res.data)
   }).catch(err => {
     storage.log('Receber dados => ' + err)
@@ -296,7 +296,7 @@ const atualizar = dados => {
     tray.destroy()
     createWindow()
   }
-  downloader.download({
+  download({
     url: dados.url
   }, (err, info) => {
     if (err) {
@@ -338,7 +338,7 @@ const buscarIps = async () => {
 }
 
 const checarFabricante = ip => {
-  const snmp = snpm.createSession(ip, 'public')
+  const snmp = createSession(ip, 'public')
   var oid = ["1.3.6.1.2.1.1.1.0"]
   snmp.get(oid, (err, res) => {
     if (!err) {
@@ -357,43 +357,21 @@ const checarFabricante = ip => {
 }
 
 const selecionarModelo = (fabricante, snmp, ip) => {
-  var impressora = null
   var marca = marcaExiste(fabricante)
-
+  var impressora = null
   var impressoras = {
-    'aficio sp 3500': printers.Aficio3500(snmp, ip),
-    'aficio sp 3510': printers.Aficio3510(snmp, ip),
-    'brother': printers.Brother(snmp, ip),
-    'canon': printers.Canon(snmp, ip),
-    'epson': printers.Epson(snmp, ip),
-    'hp': printers.Hp(snmp, ip),
-    'lexmark': printers.Lexmark(snmp, ip),
-    'oki': printers.Oki(snmp, ip),
-    'samsung': printers.Samsung(snmp, ip)
+    'aficio sp 3500': Aficio3500(snmp, ip),
+    'aficio sp 3510': Aficio3510(snmp, ip),
+    'brother': Brother(snmp, ip),
+    'canon': Canon(snmp, ip),
+    'epson': Epson(snmp, ip),
+    'hp': Hp(snmp, ip),
+    'lexmark': Lexmark(snmp, ip),
+    'oki': Oki(snmp, ip),
+    'samsung': Samsung(snmp, ip)
   }
 
   if(marca != null) {
-    /*
-    if(marca == "aficio sp 3500") {
-      impressora = new printers.Aficio3500(snmp, ip)
-    } else if(marca == "aficio sp 3510") {
-      impressora = new printers.Aficio3510(snmp, ip)
-    } else if(marca == "brother") {
-      impressora = new printers.Brother(snmp, ip)
-    } else if(marca == "canon") {
-      impressora = new printers.Canon(snmp, ip)
-    } else if(marca == "epson") {
-      impressora = new printers.Epson(snmp, ip)
-    } else if(marca == "hp") {
-      impressora = new printers.Hp(snmp, ip)
-    } else if(marca == "lexmark") {
-      impressora = new printers.Lexmark(snmp, ip)
-    } else if(marca == "oki") {
-      impressora = new printers.Oki(snmp, ip)
-    } else if(marca == "samsung") {
-      impressora = new printers.Samsung(snmp, ip)
-    }
-    */
     impressora = new impressoras[marca]
 
     if(impressora != null) {
@@ -465,7 +443,7 @@ const gravarImpressora = (impressora, snmp) => {
       }
     }
   }
-  axios.request(config).then(res => {
+  request(config).then(res => {
     criarLayoutImpressora(impressora)
     snmp.close()
   }).catch(err => {
