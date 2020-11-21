@@ -170,7 +170,7 @@ class Samsung extends Impressora {
 
 module.exports = {
   Aficio3500: Aficio3500,
-  Aficio3510: Aficio3500,
+  Aficio3510: Aficio3510,
   Brother: Brother,
   Canon: Canon,
   Epson: Epson,
@@ -179,8 +179,3 @@ module.exports = {
   Oki: Oki,
   Samsung: Samsung
 }
-/*
-module.exports = {
-  Oki: Oki
-}
-*/

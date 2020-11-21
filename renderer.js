@@ -197,7 +197,6 @@ const preencherPrincipal = (dados, version) => {
   var ano = data.getFullYear()
   var mes = data.getMonth() + 1
   if (mes < 10) { mes = "0" + mes }
-  var meses = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
   document.body.querySelector("#rodape").innerHTML = document.body.querySelector("#rodape").innerHTML + version
 

@@ -110,10 +110,7 @@ const createWindow = () => {
 app.on('ready', () => {
   criarTray()
   storage.init(() => {
-    conferirDados()
-    setTimeout(() => {
-      conferirDados()
-    }, 3600000)
+    loop()
   })
 })
 
@@ -135,6 +132,13 @@ ipcMain.on('editarDados', event => {
 /*
 / minhas funções
 */
+const loop = () => {
+  conferirDados()
+  setTimeout(() => {
+    loop()
+  }, 3600000)
+}
+
 const criarTray = () => {
   tray = new Tray(icon())
   tray.setToolTip('Mundo Eletrônico')
@@ -165,8 +169,7 @@ const conferirDados = () => {
   dados.dhcp = storage.get('dhcp')
   dados.ip = storage.get('ip')
 
-  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined
-    || dados.proxy === '' || dados.id === '' || dados.dhcp === '') {
+  if(dados.proxy === undefined || dados.id === undefined || dados.dhcp === undefined || dados.proxy === '' || dados.id === '' || dados.dhcp === '') {
     pedirDados()
   } else {
     receberDados(dados)
@@ -295,8 +298,9 @@ const atualizar = dados => {
   }
   downloader.download({
     url: dados.url
-  }, (error, info) => {
-    if (error) {
+  }, (err, info) => {
+    if (err) {
+      storage.log('Download update => ' + err)
       if(tela) {webContents.send('erro', "Não foi possível baixar as atualizações, reinicando em 3 segundos")}
       setTimeout(() => {
         app.relaunch()
@@ -310,6 +314,7 @@ const atualizar = dados => {
   })
 }
 
+var logs = ''
 const buscarIps = async () => {
   status = null
   var ips = null
@@ -325,20 +330,27 @@ const buscarIps = async () => {
       checarFabricante(ip + y)
     }
   }
+
+  setTimeout(() => {
+    storage.log('Buscando IPs  => ' + logs)
+    logs = ''
+  }, 15000)
 }
 
 const checarFabricante = ip => {
   const snmp = snpm.createSession(ip, 'public')
   var oid = ["1.3.6.1.2.1.1.1.0"]
-  snmp.get(oid, (error, res) => {
-    if (!error) {
-      var marca = res[0].value + ""
-      if(!marca.toLowerCase().includes("switch")){
+  snmp.get(oid, (err, res) => {
+    if (!err) {
+      var marca = res[0].value + ''
+      if(!marca.toLowerCase().includes('switch')) {
         selecionarModelo(marca, snmp, ip)
       } else {
+        storage.log('Marca contém switch => ' + marca + ' - ' + ip)
         snmp.close()
       }
     } else {
+      logs = logs + 'Buscando IP ' + ip + ' => ' + err + '\n\n\n'
       snmp.close()
     }
   })
@@ -347,7 +359,21 @@ const checarFabricante = ip => {
 const selecionarModelo = (fabricante, snmp, ip) => {
   var impressora = null
   var marca = marcaExiste(fabricante)
+
+  var impressoras = {
+    'aficio sp 3500': printers.Aficio3500(snmp, ip),
+    'aficio sp 3510': printers.Aficio3510(snmp, ip),
+    'brother': printers.Brother(snmp, ip),
+    'canon': printers.Canon(snmp, ip),
+    'epson': printers.Epson(snmp, ip),
+    'hp': printers.Hp(snmp, ip),
+    'lexmark': printers.Lexmark(snmp, ip),
+    'oki': printers.Oki(snmp, ip),
+    'samsung': printers.Samsung(snmp, ip)
+  }
+
   if(marca != null) {
+    /*
     if(marca == "aficio sp 3500") {
       impressora = new printers.Aficio3500(snmp, ip)
     } else if(marca == "aficio sp 3510") {
@@ -367,20 +393,26 @@ const selecionarModelo = (fabricante, snmp, ip) => {
     } else if(marca == "samsung") {
       impressora = new printers.Samsung(snmp, ip)
     }
+    */
+    impressora = new impressoras[marca]
 
     if(impressora != null) {
       impressora.pegarDados().then(res => {
-        if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null
-          && impressora.modelo != '' && impressora.serial != '' && impressora.leitura != '') {
+        if(impressora.modelo != null && impressora.serial != null && impressora.leitura != null 
+           && impressora.modelo != '' && impressora.serial != '' && impressora.leitura != '') {
           gravarImpressora(impressora, snmp)
         } else {
+          storage.log('Impressora com dados faltando => modelo -> ' + impressora.modelo + ' - leitura -> ' + 
+                       impressora.leitura + ' - serial -> ' + impressora.serial + ' - ip -> ' + ip)
           snmp.close()
         }
       })
     } else {
+      storage.log('Impressora nula => ' + fabricante + ' - ' + ip)
       snmp.close()
     }
   } else {
+    storage.log('Marca nula => ' + fabricante + ' - ' + ip)
     snmp.close()
   }
 }
@@ -434,10 +466,11 @@ const gravarImpressora = (impressora, snmp) => {
     }
   }
   axios.request(config).then(res => {
-    snmp.close()
     criarLayoutImpressora(impressora)
+    snmp.close()
   }).catch(err => {
     if(tela) {webContents.send('erro', "Erro ao gravar impressora ", impressora.serial, ", ", impressora.modelo, ", ", impressora.ip, ", ", impressora.leitura)}
+    storage.log('Erro ao gravar impressora no DB => IP -> ' + impressora.ip + ' - Modelo -> ' + impressora.modelo + ' - Serial -> ' + impressora.serial + ' - Erro -> ' + err)
     snmp.close()
   })
 }
