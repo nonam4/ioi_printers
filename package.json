@@ -21,7 +21,7 @@
     "axios": "^0.19.2",
     "electron-download-manager": "^2.1.2",
     "electron-updater": "^4.3.5",
-    "net-snmp": "^2.9.3"
+    "net-snmp": "^2.9.8"
   },
   "build": {
     "appId": "ioiprinters",
