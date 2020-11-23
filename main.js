@@ -49,6 +49,7 @@ var cliente = null
 var tela = false
 var webContents = null
 var mainWindow = null
+var updateURL
 
 const createWindow = () => {
   // cria a janela principal
@@ -123,6 +124,17 @@ ipcMain.on('gravarDados', (event, dados) => {
 
 ipcMain.on('atualizarDados', event => {
   conferirDados()
+})
+
+ipcMain.on('forceUpdate', event => {
+  if(process.platform === "win32") {
+    atualizar()
+  } else {
+    if(tela) {
+      webContents.send('principal', cliente, app.getVersion())
+      webContents.send('erro', "Atualizações desativadas nessa plataforma!")
+    }
+  }
 })
 
 ipcMain.on('editarDados', event => {
@@ -275,8 +287,9 @@ const receberDados = dados => {
 }
 
 const processarDados = dados => {
+  updateURL = dados.url
   if(dados.atualizar && process.platform === "win32") {
-    atualizar(dados)
+    atualizar()
   } else if(dados.valid) {
     cliente = dados.cliente
     if(cliente.ativo) {
@@ -289,7 +302,7 @@ const processarDados = dados => {
   if(tela) {webContents.send('removerLoad')}
 }
 
-const atualizar = dados => {
+const atualizar = () => {
   status = "atualizando"
 
   if(tela) { webContents.send('update') } else {
@@ -297,7 +310,7 @@ const atualizar = dados => {
     createWindow()
   }
   downloader.download({
-    url: dados.url
+    url: updateURL
   }, (err, info) => {
     if (err) {
       storage.log('Download update => ' + err)
@@ -314,7 +327,7 @@ const atualizar = dados => {
   })
 }
 
-var logs = 'Buscando IPs  => \n\n\n'
+var logs = 'Buscando IPs  => \n\n'
 const buscarIps = async () => {
   status = null
   var ips = null

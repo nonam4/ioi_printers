@@ -340,6 +340,11 @@ const funcoesPrincipal = () => {
     criarLoad()
     renderer.send('atualizarDados')
   })
+  var update = document.getElementById('update')
+  update.addEventListener('click', () => {
+    criarUpdate()
+    renderer.send('forceUpdate')
+  })
   var settings = document.getElementById('settings')
   settings.addEventListener('click', () => {
     renderer.send('editarDados')

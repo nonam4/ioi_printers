@@ -48,8 +48,13 @@ class Aficio3500 extends Impressora {
 
   async pegarDados() {
     this.modelo = await pegarOid(["1.3.6.1.2.1.25.3.2.1.3.1"], this.snmp)
-    this.serial = await pegarOid(["1.3.6.1.4.1.367.3.2.1.2.1.4.0"], this.snmp)
     this.leitura = await pegarOid(["1.3.6.1.4.1.367.3.2.1.2.19.2.0"], this.snmp)
+
+    this.serial = await pegarOid(["1.3.6.1.4.1.367.3.2.1.2.1.4.0"], this.snmp)
+    //se o serial estiver em branco, transforma o MAC em serial
+    if(this.serial === '' || this.serial.includes('')) {
+      this.serial = await pegarOid(["1.3.6.1.2.1.2.2.1.6.1"], this.snmp)
+    }
   }
 }
 
