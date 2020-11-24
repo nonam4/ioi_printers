@@ -10,13 +10,17 @@ class Impressora {
   }
 }
 
-const pegarOid = (oid, snmp) => {
+const pegarOid = (oid, snmp, mac) => {
   return new Promise(resolve => {
     snmp.get(oid, function (error, res) {
       if (!error) {
-        //remove caractéres inválidos, por exemplo: �
-        //resolve((res[0].value + "").replace(/\uFFFD/g, ''))
-        resolve((res[0].value + "").replace(/[^\w\s]/gi, ''))
+        if(mac) {
+          //caso seja uma ricoh 3500 o serial será o MAC da placa
+          resolve((res[0].value).toString('hex').toUpperCase())
+        } else {
+          //remove caractéres inválidos, por exemplo: �
+          resolve((res[0].value + '').replace(/[^\w\s]/gi, ''))
+        }
       } else {
         resolve(null)
       }
@@ -53,7 +57,8 @@ class Aficio3500 extends Impressora {
     this.serial = await pegarOid(["1.3.6.1.4.1.367.3.2.1.2.1.4.0"], this.snmp)
     //se o serial estiver em branco, transforma o MAC em serial
     if(this.serial === '' || this.serial.includes('')) {
-      this.serial = await pegarOid(["1.3.6.1.2.1.2.2.1.6.1"], this.snmp)
+      //this.serial = await pegarOid(["1.3.6.1.2.1.2.2.1.6.1"], this.snmp, true)
+      this.serial = await pegarOid(["1.3.6.1.4.1.367.3.2.1.7.2.1.7.1"], this.snmp, true)
     }
   }
 }
