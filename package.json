@@ -18,7 +18,7 @@
     "electron-reload": "^1.5.0"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "electron-download-manager": "^2.1.2",
     "electron-updater": "^4.3.5",
     "net-snmp": "^2.9.8"
